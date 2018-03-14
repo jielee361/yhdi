@@ -12,7 +12,7 @@ public class BatchDiBoot {
         BatchDiDriver batchDiDriver;
         int parallel = 1;
         if (len == 3) {
-            stable=args[0];//抽取表232
+            stable=args[0];//抽取表
             datapath=args[1];//存放目录
             parallel=Integer.valueOf(args[2]);//并行度
             batchDiDriver = new BatchDiDriver(stable,datapath,parallel);

@@ -7,15 +7,15 @@ public class CommonConn {
     private static final String hiveDriver = "org.apache.hive.jdbc.HiveDriver";
     //String oraUrl = "jdbc:oracle:thin:@192.168.140.129:1521/orcl";
     //String hiveUrl = "jdbc:hive2://hostip:10016/default"
-    public static Connection getOraConnection(String url,String username,String passwd) throws SQLException {
-        try {
-            Class.forName(oraDriver);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw new RuntimeException("加载ORACLE驱动失败！");
-        }
-        Connection conn = DriverManager.getConnection(url, username, passwd);
-        return conn;
+    public static Connection getOraConnection(String url,String username,String passwd) throws Exception {
+//        try {
+//            Class.forName(oraDriver);
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("加载ORACLE驱动失败！");
+//        }
+//        Connection conn = DriverManager.getConnection(url, username, passwd);
+        return JdbcPoolUtil.getConn(oraDriver,url,username,passwd);
 
     }
 

@@ -33,10 +33,8 @@ public class JdbcPoolUtil {
 
     }
 
-    public static Connection getConn(String driverName,String url,String username,String password)
+    public static Connection getOraPoolConn(String driverName,String url,String username,String password)
             throws PropertyVetoException, SQLException {
-        ComboPooledDataSource dataSource;
-        if (driverName.contains("oracle")) {
             if (oracleDataSource == null) {
                 synchronized (obj) {
                     if (oracleDataSource == null) {
@@ -45,7 +43,10 @@ public class JdbcPoolUtil {
                 }
             }
             return oracleDataSource.getConnection();
-        }else if (driverName.contains("hive")) {
+        }
+
+    public static Connection getHivePoolConn(String driverName,String url,String username,String password)
+            throws SQLException, PropertyVetoException {
             if (hiveDataSource == null) {
                 synchronized (obj) {
                     if (hiveDataSource == null) {
@@ -54,9 +55,5 @@ public class JdbcPoolUtil {
                 }
             }
             return hiveDataSource.getConnection();
-        }else {
-            throw new RuntimeException("不识别的驱动类："+driverName);
-        }
-
     }
 }

@@ -5,6 +5,8 @@ import com.yinhai.yhdi.batch.entity.TaskStat;
 import com.yinhai.yhdi.batch.extract.ExtractRunnable;
 import com.yinhai.yhdi.common.*;
 import com.yinhai.yhdi.common.entity.DbConnInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.sql.Connection;
@@ -19,6 +21,7 @@ public class BatchDiDriver  {
     private DbConnInfo sdb ;
     private DbConnInfo tdb ;
     Set<String> endTasks = new HashSet<String>();
+    private static final Logger logger = LoggerFactory.getLogger(BatchDiDriver.class);
 
     public BatchDiDriver(String stable, String dataPath, int parallel) {
         initPrp();
@@ -169,15 +172,15 @@ public class BatchDiDriver  {
                             runningNum++;
                             break;
                         case 0 : break;//初始状态，还未提交，不做处理
-                        default:System.out.println("不识别的运行状态："+runStat);
+                        default:logger.info("不识别的运行状态："+runStat);
                     }
 
                 }
 
             }
-            System.out.println("== running task num: " + runningNum);
+            logger.info("== running task num: " + runningNum);
             if (runningNum == 0) {//已没有还在运行的程序。
-                System.out.println("此表监控完成！");
+                logger.info("==此表监控完成！");
                 break;
             }
 
@@ -191,7 +194,7 @@ public class BatchDiDriver  {
     }
 
     private void printRunInfo(String taskName,String taskStat,long rows,long runTime) {
-        System.out.println(String.format(BatchDiConst.EXTRACT_STAT_OUTP,taskName,taskStat,rows,runTime));
+        logger.info(String.format(BatchDiConst.EXTRACT_STAT_OUTP,taskName,taskStat,rows,runTime));
 
     }
 }

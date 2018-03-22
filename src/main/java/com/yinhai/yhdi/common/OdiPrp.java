@@ -55,5 +55,9 @@ public class OdiPrp {
         return Integer.valueOf(prp.getProperty(key));
     }
 
+    public static long getLongProperty(String key) {
+        return Long.valueOf(prp.getProperty(key));
+    }
+
 
 }

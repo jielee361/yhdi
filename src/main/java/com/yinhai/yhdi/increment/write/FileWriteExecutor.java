@@ -70,7 +70,10 @@ public class FileWriteExecutor extends WriteExecutor {
             op.flush();
             op.close();
             //write message queue
-            FileIndex fileIndex = new FileIndex(scn,rsid,ssn);
+            FileIndex fileIndex = new FileIndex();
+            fileIndex.setScn(scn);
+            fileIndex.setRsid(rsid);
+            fileIndex.setSsn(ssn);
             indexQueue.add(fileIndex);
 
             if (readNum < fileSize) {

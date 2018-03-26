@@ -26,9 +26,6 @@ public class OraReadExecutor extends ReadExecutor {
 
     public OraReadExecutor(Connection conn) {
         icrmtConf = IcrmtEnv.getIcrmtConf();
-        this.lastScn = IcrmtEnv.getLastIndex().getScn();
-        this.lastRsid = IcrmtEnv.getLastIndex().getRsid();
-        this.lastSsn = IcrmtEnv.getLastIndex().getSsn();
         this.queueMaxSize = icrmtConf.getRedoQueueSize();
         this.conn = conn;
         this.stopFlag = false;
@@ -41,7 +38,10 @@ public class OraReadExecutor extends ReadExecutor {
 
     @Override
     public void startRead(LinkedBlockingDeque<RedoObj> redoQueue) throws Exception {
-        if (lastSsn == 0L) { //首次启动
+        this.lastScn = IcrmtEnv.getLastIndex().getScn();
+        this.lastRsid = IcrmtEnv.getLastIndex().getRsid();
+        this.lastSsn = IcrmtEnv.getLastIndex().getSsn();
+        if (this.lastScn == 0L) { //首次启动
             beginScn = icrmtConf.getLgmnrBeginScn();
         }else { //恢复启动
             beginScn = lastScn;

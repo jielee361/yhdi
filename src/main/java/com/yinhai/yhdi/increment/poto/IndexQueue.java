@@ -90,7 +90,11 @@ public class IndexQueue {
         if (fileIndex != null) {
             IcrmtEnv.setLastIndex(fileIndex);
         }else {
-            IcrmtEnv.setLastIndex(new FileIndex(0L,"",0));//首次启动时放入这个。
+            FileIndex fileIndex1 = new FileIndex();
+            fileIndex1.setScn(0L);
+            fileIndex1.setRsid("");
+            fileIndex1.setSsn(0);
+            IcrmtEnv.setLastIndex(fileIndex1);//首次启动时放入这个。
         }
 
     }

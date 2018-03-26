@@ -2,10 +2,14 @@ package com.yinhai.yhdi.increment;
 
 import com.yinhai.yhdi.common.OdiPrp;
 import com.yinhai.yhdi.common.ThreadPoolUtil;
+import com.yinhai.yhdi.increment.entity.FileIndex;
 import com.yinhai.yhdi.increment.entity.IcrmtConf;
 import com.yinhai.yhdi.increment.entity.ThreadStat;
+import com.yinhai.yhdi.increment.poto.IndexQueue;
 import com.yinhai.yhdi.increment.read.ReadRunnable;
+import com.yinhai.yhdi.increment.write.WriteRunnable;
 
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SourceServer {
@@ -17,6 +21,13 @@ public class SourceServer {
         ThreadPoolUtil threadPool = ThreadPoolUtil.getThreadPool(icrmtConf.getMaxTheadPoolSize());
         ConcurrentHashMap<String,ThreadStat> threadMap = new ConcurrentHashMap<>();
         IcrmtEnv.init(threadMap,threadPool,icrmtConf);
+        IndexQueue indexQueue = new IndexQueue();
+        try {
+            indexQueue.startup();//初始化索引队列
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        IcrmtEnv.setIndexQueue(indexQueue);
 
         //start read
         ReadRunnable readRunnable = new ReadRunnable(readTaskName);
@@ -26,6 +37,12 @@ public class SourceServer {
             e.printStackTrace();
         }
         //start write
+        WriteRunnable writeRunnable = new WriteRunnable(writeTaskName);
+        try {
+            IcrmtEnv.getThreadPool().submit(writeTaskName,writeRunnable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     private static IcrmtConf getConfFromPrp() {
         IcrmtConf icrmtConf = new IcrmtConf();
@@ -41,6 +58,8 @@ public class SourceServer {
         icrmtConf.setTargetDbkind(OdiPrp.getProperty("target.dbkind"));
         icrmtConf.setMaxTheadPoolSize(OdiPrp.getIntProperty("threadpool.maxsize"));
         icrmtConf.setLgmnrSqlkind(OdiPrp.getProperty("lgmnr.sqlkind"));
+        icrmtConf.setFileSize(OdiPrp.getIntProperty("file.size"));
+        icrmtConf.setPauseTime(OdiPrp.getIntProperty("pause.time"));
         return icrmtConf;
     }
 }

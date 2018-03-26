@@ -1,4 +1,4 @@
-package com.yinhai.yhdi.increment.entity;
+package com.yinhai.yhdi.increment.poto;
 
 import java.io.Serializable;
 

@@ -1,6 +1,6 @@
 package com.yinhai.yhdi.increment.write;
 
-import com.yinhai.yhdi.increment.entity.RedoObj;
+import com.yinhai.yhdi.increment.poto.RedoObj;
 
 import java.util.concurrent.LinkedBlockingDeque;
 

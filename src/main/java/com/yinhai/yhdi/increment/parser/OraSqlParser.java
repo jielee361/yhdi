@@ -1,8 +1,7 @@
 package com.yinhai.yhdi.increment.parser;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yinhai.yhdi.increment.SourceServer;
-import com.yinhai.yhdi.increment.entity.RedoObj;
+import com.yinhai.yhdi.increment.poto.RedoObj;
 
 public class OraSqlParser extends SqlParser{
     private String table = "table";
@@ -54,8 +53,9 @@ public class OraSqlParser extends SqlParser{
                 colvalue = vs1.substring(12,vs1.indexOf("'",13));
                 vs1 = vs1.substring(dot);
             }else if (vs1.startsWith("'")) {
-                colvalue = vs1.substring(1,dot - 7);//have risk: " and ""
-                vs1 = vs1.substring(dot);
+                colvalue = vs1.substring(1,vs1.indexOf("' and"));//no risk
+                vs1 = vs1.substring(vs1.indexOf("' and") + 7);
+                System.out.println(vs1);
             }else {
                 colvalue = vs1.substring(0,dot - 6);
                 vs1 = vs1.substring(dot);
@@ -66,7 +66,7 @@ public class OraSqlParser extends SqlParser{
     }
 
     private JSONObject transUpdateJson(String sqlRedo) {
-        //update "HSTEST"."TB_TEST1" set "N2" = 12323, "V1" = 'dsfdsaf', "D1" = TIMESTAMP ' 2018-03-06 11:28:49',
+        //update "HSTEST"."TB_TEST1" set "N2" = 12323, "V1" = 'dsfd'',saf', "D1" = TIMESTAMP ' 2018-03-06 11:28:49',
         // "T1" = TIMESTAMP ' 2017-10-23 12:15:00.123000' where "N1" = 112312435323
         JSONObject colJson = transDeleteJson(sqlRedo);
         vs1 = sqlRedo.substring(sqlRedo.indexOf(" set ") + 5,sqlRedo.indexOf(" where \"")) + ", \"";
@@ -83,7 +83,7 @@ public class OraSqlParser extends SqlParser{
             }else if (vs1.startsWith("'")) {
                 if (vs1.contains("', \"")) {//have risk: "', ""
                     colvalue = vs1.substring(1,vs1.indexOf("', \""));//have risk: "', ""
-                    vs1 = vs1.substring(vs1.indexOf("', \"") + 3); //have risk: "', ""
+                    vs1 = vs1.substring(vs1.indexOf("', \"") + 3); //have risk: "', "" --no
                 }else { //最后一个字段
                     colvalue = vs1.substring(1,vs1.length() - 4);
                     vs1 = "";
@@ -99,7 +99,7 @@ public class OraSqlParser extends SqlParser{
     }
 
     private JSONObject transInsertJson(String sqlRedo) {
-        //) values (112312435323425479,NULL,NULL,'12','cc      ',EMPTY_CLOB(),TIMESTAMP ' 2018-03-22 11:28:49',
+        //) values (112312435323425479,'a"dfs",f',NULL,'12','cc      ',EMPTY_CLOB(),TIMESTAMP ' 2018-03-22 11:28:49',
         // TIMESTAMP ' 2017-12-23 12:15:00.123000',TIMESTAMP ' 2017-12-23 12:15:00.123456780')
 
         inp = sqlRedo.indexOf(") values (");//no risk
@@ -120,7 +120,7 @@ public class OraSqlParser extends SqlParser{
                     colvalue = vs1.substring(1,vs1.length()-2);
                 }else {
                     colvalue = vs1.substring(1,vs1.indexOf("',")-1);//have risk: "',"
-                    vs1 = vs1.substring(vs1.indexOf("',")+2); //have risk: ',
+                    vs1 = vs1.substring(vs1.indexOf("',")+2); //have risk: ', --no
                 }
             }else {
                 colvalue = vs1.substring(0,dot-1);

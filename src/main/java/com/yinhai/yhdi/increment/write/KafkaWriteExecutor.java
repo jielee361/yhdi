@@ -1,12 +1,13 @@
 package com.yinhai.yhdi.increment.write;
 
-import com.yinhai.yhdi.increment.entity.RedoObj;
+import com.yinhai.yhdi.increment.poto.RedoObj;
 
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class KafkaWriterExecutor extends WriteExecutor {
+public class KafkaWriteExecutor extends WriteExecutor {
     @Override
     public void startWrite(LinkedBlockingDeque<RedoObj> redoQueue) throws Exception {
+
 
     }
 

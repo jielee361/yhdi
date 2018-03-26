@@ -4,8 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yinhai.yhdi.common.CommonConn;
 import com.yinhai.yhdi.increment.IcrmtEnv;
 import com.yinhai.yhdi.increment.entity.IcrmtConf;
-import com.yinhai.yhdi.increment.entity.RedoObj;
-import com.yinhai.yhdi.increment.parser.OraFileParser;
+import com.yinhai.yhdi.increment.poto.RedoObj;
 import com.yinhai.yhdi.increment.parser.OraSqlParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +17,7 @@ public class OraReadExecutor extends ReadExecutor {
     private long lastScn;
     private String lastRsid;
     private int lastSsn;
+    private long beginScn;
     private boolean stopFlag;
     private int queueMaxSize;
     private IcrmtConf icrmtConf;
@@ -26,9 +26,9 @@ public class OraReadExecutor extends ReadExecutor {
 
     public OraReadExecutor(Connection conn) {
         icrmtConf = IcrmtEnv.getIcrmtConf();
-        this.lastScn = icrmtConf.getLastScn();
-        this.lastRsid = icrmtConf.getLastRsid();
-        this.lastSsn = icrmtConf.getLastSsn();
+        this.lastScn = IcrmtEnv.getLastIndex().getScn();
+        this.lastRsid = IcrmtEnv.getLastIndex().getRsid();
+        this.lastSsn = IcrmtEnv.getLastIndex().getSsn();
         this.queueMaxSize = icrmtConf.getRedoQueueSize();
         this.conn = conn;
         this.stopFlag = false;
@@ -41,11 +41,16 @@ public class OraReadExecutor extends ReadExecutor {
 
     @Override
     public void startRead(LinkedBlockingDeque<RedoObj> redoQueue) throws Exception {
+        if (lastSsn == 0L) { //首次启动
+            beginScn = icrmtConf.getLgmnrBeginScn();
+        }else { //恢复启动
+            beginScn = lastScn;
+        }
         //start lgmnr
         OraLogmnrOper oraLgmnrOper = new OraLogmnrOper();
-        oraLgmnrOper.startLogmnr(conn,icrmtConf.getLgmnrBeginScn(),icrmtConf.getLgmnrOpertion());
+        oraLgmnrOper.startLogmnr(conn,beginScn,icrmtConf.getLgmnrOpertion());
         //start read
-        ResultSet rs = oraLgmnrOper.getLogmnrResult(conn, icrmtConf.getLgmnrBeginScn(),
+        ResultSet rs = oraLgmnrOper.getLogmnrResult(conn, beginScn,
                 icrmtConf.getTableString(), icrmtConf.isOracle12c(), icrmtConf.getLgmnrSqlkind());
         StringBuffer sqlStrBuff = new StringBuffer();
         OraSqlParser oraSqlParser = new OraSqlParser();
@@ -88,9 +93,9 @@ public class OraReadExecutor extends ReadExecutor {
                 redoObj.setOperation_code(rs.getInt(6));
                 redoObj.setSql_redo(sqlStrBuff.append(rs.getString(7)).toString());
                 redoQueue.add(redoObj);
-                System.out.println(redoObj.getSql_redo());
-                JSONObject jsonObject = oraSqlParser.redo2Json(redoObj);
-                System.out.println("解析数据："+jsonObject.toJSONString());
+                //System.out.println(redoObj.getSql_redo());
+                //JSONObject jsonObject = oraSqlParser.redo2Json(redoObj);
+                //System.out.println("解析数据："+jsonObject.toJSONString());
                 sqlStrBuff.delete(0, sqlStrBuff.length());
                 if (redoQueue.size() > queueMaxSize) {
                     logger.info("缓存队列出现积压，暂停1秒后再抽取！");

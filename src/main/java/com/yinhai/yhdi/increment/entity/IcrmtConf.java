@@ -1,6 +1,9 @@
 package com.yinhai.yhdi.increment.entity;
 
 public class IcrmtConf {
+    //util
+    private int maxTheadPoolSize;
+    //read
     private String sourceDbkind;
     private String sourceUsername;
     private String sourcepassword;
@@ -8,11 +11,33 @@ public class IcrmtConf {
     private String targetDbkind;
     private String tableString;//table's name which will use to sync,format: user1.table1,user2.table2
 
-    private int maxTheadPoolSize;
-
     private String lgmnrOpertion;
     private long lgmnrBeginScn;
     private String lgmnrSqlkind;
+    private boolean isOracle12c;
+
+    //write
+    private int fileSize;
+    private int pauseTime;
+
+
+    private int redoQueueSize;
+
+    public int getPauseTime() {
+        return pauseTime;
+    }
+
+    public void setPauseTime(int pauseTime) {
+        this.pauseTime = pauseTime;
+    }
+
+    public int getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(int fileSize) {
+        this.fileSize = fileSize;
+    }
 
     public String getLgmnrSqlkind() {
         return lgmnrSqlkind;
@@ -22,11 +47,6 @@ public class IcrmtConf {
         this.lgmnrSqlkind = lgmnrSqlkind;
     }
 
-    private long lastScn;
-    private int lastSsn;
-    private String lastRsid;
-    private boolean isOracle12c;
-
 
     public int getMaxTheadPoolSize() {
         return maxTheadPoolSize;
@@ -35,32 +55,6 @@ public class IcrmtConf {
     public void setMaxTheadPoolSize(int maxTheadPoolSize) {
         this.maxTheadPoolSize = maxTheadPoolSize;
     }
-
-    public long getLastScn() {
-        return lastScn;
-    }
-
-    public void setLastScn(long lastScn) {
-        this.lastScn = lastScn;
-    }
-
-    public int getLastSsn() {
-        return lastSsn;
-    }
-
-    public void setLastSsn(int lastSsn) {
-        this.lastSsn = lastSsn;
-    }
-
-    public String getLastRsid() {
-        return lastRsid;
-    }
-
-    public void setLastRsid(String lastRsid) {
-        this.lastRsid = lastRsid;
-    }
-
-    private int redoQueueSize;
 
     public int getRedoQueueSize() {
         return redoQueueSize;

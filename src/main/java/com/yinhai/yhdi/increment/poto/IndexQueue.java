@@ -3,7 +3,7 @@ package com.yinhai.yhdi.increment.poto;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.yinhai.yhdi.common.KyroUtil;
+import com.yinhai.yhdi.common.KryoUtil;
 import com.yinhai.yhdi.common.OdiPrp;
 import com.yinhai.yhdi.increment.IcrmtEnv;
 import com.yinhai.yhdi.increment.entity.FileIndex;
@@ -18,7 +18,7 @@ public class IndexQueue {
     private File inFile;
     private File outFile;
     private String indexDir;
-    private final Kryo kryo = KyroUtil.getKryo();
+    private final Kryo kryo = KryoUtil.getKryo();
     private final static Logger logger = LoggerFactory.getLogger(IndexQueue.class);
 
     /**
@@ -26,13 +26,11 @@ public class IndexQueue {
      */
     public IndexQueue() {
         indexDir = OdiPrp.getProperty("index.path");
-        //check index file dir;
-        File dirFile = new File(indexDir);
-        if (!dirFile.exists()) {
-            dirFile.mkdir();
-        }
         inFile = new File(indexDir,"msgQueue.on");
         outFile = new File(indexDir,"outPoint");//记录已经取走的位置。
+    }
+    public int getSize() {
+        return msgQueue.size();
     }
 
     /**
@@ -75,21 +73,37 @@ public class IndexQueue {
      */
     public void startup() throws IOException {
         msgQueue.clear();
-        FileIndex fileIndex = null;
-        if (inFile.exists()) {//索引文件还为生成，为首次启动
-            Input input = new Input(new FileInputStream(inFile));
-            while (input.available() != 0) {
-                fileIndex = kryo.readObject(input, FileIndex.class);
-                msgQueue.add(fileIndex);
+        FileIndex fileIndexIn = null;
+        FileIndex fileIndexOut = null;
+        boolean isout = false;//是否是已经获取过的索引标记。
+        //获取上次处理节点
+        if (outFile.exists()) {
+            Input inputOut = new Input(new FileInputStream(outFile));
+            fileIndexOut = kryo.readObject(inputOut, FileIndex.class);
+            inputOut.close();
+            isout = true;
+        }
+        //循环读取未处理的索引到msgQueue中
+        if (inFile.exists()) {
+            Input inputIn = new Input(new FileInputStream(inFile));
+            while (inputIn.available() != 0) {
+                fileIndexIn = kryo.readObject(inputIn, FileIndex.class);
+                if (isout) {
+                    if (fileIndexIn.toString().equals(fileIndexOut.toString())) {
+                        isout = false;//此后的索引都是未获取过的索引，需要放入到索引队列中。
+                    }
+                }else {
+                    msgQueue.add(fileIndexIn);
+                }
             }
-            input.close();
+            inputIn.close();
         }else {
             logger.warn("未找到索引队列文件，此次启动按首次启动规则启动。");
         }
         //最后一个索引及为上次抽取的断点，放入到ENV中。
-        if (fileIndex != null) {
-            IcrmtEnv.setLastIndex(fileIndex);
-        }else {
+        if (fileIndexIn != null) {
+            IcrmtEnv.setLastIndex(fileIndexIn);
+        }else {//索引文件还为生成，为首次启动
             FileIndex fileIndex1 = new FileIndex();
             fileIndex1.setScn(0L);
             fileIndex1.setRsid("");

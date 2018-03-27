@@ -7,15 +7,21 @@ import com.yinhai.yhdi.increment.entity.IcrmtConf;
 import com.yinhai.yhdi.increment.entity.ThreadStat;
 import com.yinhai.yhdi.increment.poto.IndexQueue;
 import com.yinhai.yhdi.increment.read.ReadRunnable;
+import com.yinhai.yhdi.increment.update.UpdateRunnable;
 import com.yinhai.yhdi.increment.write.WriteRunnable;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SourceServer {
     private static final String readTaskName = "yhdi-read-task";
     private static final String writeTaskName = "yhdi-write-task";
+    private static final String updateTaskName = "yhdi-update-task";
     public static void main(String[] args) {
+        //create work dir
+        createWorkDir();
+
         //init ENV
         IcrmtConf icrmtConf = getConfFromPrp();
         ThreadPoolUtil threadPool = ThreadPoolUtil.getThreadPool(icrmtConf.getMaxTheadPoolSize());
@@ -43,7 +49,17 @@ public class SourceServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        //start update
+        UpdateRunnable updateRunnable = new UpdateRunnable(updateTaskName);
+        try {
+            IcrmtEnv.getThreadPool().submit(updateTaskName,updateRunnable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
+
     private static IcrmtConf getConfFromPrp() {
         IcrmtConf icrmtConf = new IcrmtConf();
         icrmtConf.setLgmnrBeginScn(OdiPrp.getLongProperty("lgmnr.begin.scn"));
@@ -61,5 +77,16 @@ public class SourceServer {
         icrmtConf.setFileSize(OdiPrp.getIntProperty("file.size"));
         icrmtConf.setPauseTime(OdiPrp.getIntProperty("pause.time"));
         return icrmtConf;
+    }
+
+    private static void createWorkDir() {
+        File dataDir = new File(OdiPrp.getProperty("data.path"));
+        if (!dataDir.exists()) {
+            dataDir.mkdir();
+        }
+        File indexDir = new File(OdiPrp.getProperty("index.path"));
+        if (!indexDir.exists()) {
+            indexDir.mkdir();
+        }
     }
 }

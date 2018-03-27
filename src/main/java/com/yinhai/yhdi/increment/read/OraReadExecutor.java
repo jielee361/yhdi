@@ -93,9 +93,6 @@ public class OraReadExecutor extends ReadExecutor {
                 redoObj.setOperation_code(rs.getInt(6));
                 redoObj.setSql_redo(sqlStrBuff.append(rs.getString(7)).toString());
                 redoQueue.add(redoObj);
-                //System.out.println(redoObj.getSql_redo());
-                //JSONObject jsonObject = oraSqlParser.redo2Json(redoObj);
-                //System.out.println("解析数据："+jsonObject.toJSONString());
                 sqlStrBuff.delete(0, sqlStrBuff.length());
                 if (redoQueue.size() > queueMaxSize) {
                     logger.info("缓存队列出现积压，暂停1秒后再抽取！");

@@ -2,7 +2,7 @@ package com.yinhai.yhdi.increment.write;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Output;
-import com.yinhai.yhdi.common.KyroUtil;
+import com.yinhai.yhdi.common.KryoUtil;
 import com.yinhai.yhdi.common.OdiPrp;
 import com.yinhai.yhdi.increment.IcrmtEnv;
 import com.yinhai.yhdi.increment.entity.FileIndex;
@@ -37,14 +37,13 @@ public class FileWriteExecutor extends WriteExecutor {
         List<SqlPoto> sqlPotoList = new ArrayList<>();
         OraFileParser oraFileParser = new OraFileParser();
         String dataPath = OdiPrp.getProperty("data.path");
-        if (!new File(dataPath).exists()) {
-            new File(dataPath).mkdir();
-        }
         IndexQueue indexQueue = IcrmtEnv.getIndexQueue();
-        Kryo kryo = KyroUtil.getKryo();
+        Kryo kryo = KryoUtil.getKryo();
 
         while (!stopFlag) {
             //begin to read data from queue
+            readNum = 0;
+            sqlPotoList.clear();
             while (readNum <  fileSize) {
                 RedoObj redoObj = redoQueue.poll();
                 if (redoObj == null) {
@@ -56,7 +55,6 @@ public class FileWriteExecutor extends WriteExecutor {
                 rsid = redoObj.getRs_id();
                 ssn = redoObj.getSsn();
                 readNum ++;
-
             }
             if (readNum == 0) {
                 Thread.sleep(icrmtConf.getPauseTime());

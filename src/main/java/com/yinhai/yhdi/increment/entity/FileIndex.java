@@ -31,4 +31,9 @@ public class FileIndex implements Serializable {
     public void setSsn(int ssn) {
         this.ssn = ssn;
     }
+
+    @Override
+    public String toString() {
+        return scn + "-" + rsid + "-" + ssn;
+    }
 }

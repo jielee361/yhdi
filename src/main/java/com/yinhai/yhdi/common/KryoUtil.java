@@ -7,7 +7,7 @@ import com.yinhai.yhdi.increment.poto.SqlPoto;
 import java.util.ArrayList;
 
 //使用线程池化技术，可能出现ThreadLocal内存泄露
-public class KyroUtil {
+public class KryoUtil {
 	private static final ThreadLocal<Kryo> kryos = new ThreadLocal<Kryo>() {
 		protected Kryo initialValue() {
 			Kryo kryo = new Kryo();

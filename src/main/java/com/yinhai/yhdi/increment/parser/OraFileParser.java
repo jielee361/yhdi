@@ -28,7 +28,7 @@ public class OraFileParser {
                 transUpdateJson(sqlPoto,redo.getSql_redo());
                 break;
         }
-        sqlPoto.printcol();
+        //sqlPoto.printcol();
         return sqlPoto;
     }
     private void transDeleteJson(SqlPoto sqlPoto,String sqlRedo) {

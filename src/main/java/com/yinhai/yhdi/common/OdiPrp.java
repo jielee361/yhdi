@@ -15,7 +15,7 @@ public class OdiPrp {
         File cfile = new File("");
         String confPath = cfile.getAbsolutePath()+File.separator+"conf"+File.separator;
         String dataPath = cfile.getAbsolutePath()+File.separator+"data"+File.separator;
-        String indexPath = cfile.getAbsolutePath()+File.separator+"index"+File.separator;
+        String indexPath = dataPath + "index" + File.separator;
         //加载log4j配置文件
         try {
             PropertyConfigurator.configure(confPath+"log4j.properties");

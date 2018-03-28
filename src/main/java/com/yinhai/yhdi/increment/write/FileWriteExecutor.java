@@ -11,6 +11,8 @@ import com.yinhai.yhdi.increment.poto.IndexQueue;
 import com.yinhai.yhdi.increment.poto.RedoObj;
 import com.yinhai.yhdi.increment.poto.SqlPoto;
 import com.yinhai.yhdi.increment.parser.OraFileParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,6 +24,7 @@ public class FileWriteExecutor extends WriteExecutor {
     private boolean stopFlag;
     private int fileSize;
     private IcrmtConf icrmtConf;
+    private final static Logger logger = LoggerFactory.getLogger(FileWriteExecutor.class);
     public FileWriteExecutor() {
         this.icrmtConf = IcrmtEnv.getIcrmtConf();
         this.fileSize = icrmtConf.getFileSize();
@@ -74,6 +77,7 @@ public class FileWriteExecutor extends WriteExecutor {
             fileIndex.setRsid(rsid);
             fileIndex.setSsn(ssn);
             indexQueue.add(fileIndex);
+            logger.debug("write num:" + readNum);
 
             if (readNum < fileSize) {
                 Thread.sleep(2000);

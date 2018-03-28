@@ -20,8 +20,8 @@ public class GPUpdateExecutor extends UpdateExecutor {
     @Override
     public void startUpdate() throws Exception {
         //get jdbc
-        Connection gpconnection = TargetConn.getGpconnection("jdbc:postgresql://192.168.26.220:25432/template1",
-                "greenplum", "");
+        Connection gpconnection = TargetConn.getGpconnection(icrmtConf.getTargetUrl(), icrmtConf.getTargetUsername()
+                ,icrmtConf.getTargetpassword());
         Statement st = gpconnection.createStatement();
         GPSqlParer gpSqlParer = new GPSqlParer();
         while (!stopFlag) {
@@ -34,17 +34,17 @@ public class GPUpdateExecutor extends UpdateExecutor {
             }
             for (SqlPoto sqlPoto : sqlPotos) {
                 st.addBatch(gpSqlParer.file2GpSql(sqlPoto));
-                sqlPoto.printcol();
-                System.out.println(gpSqlParer.file2GpSql(sqlPoto));
+                //sqlPoto.printcol();
+                //logger.debug("add sql:" + gpSqlParer.file2GpSql(sqlPoto));
             }
-            System.out.println("update获取到：" + sqlPotos.size());
             st.executeBatch();
+            logger.debug("success updated num: " + sqlPotos.size());
             //处理成功后弹出
             pollNext();
         }
 
-        //CommonConn.closeSt(st);
-        //CommonConn.closeConnection(gpconnection);
+        CommonConn.closeSt(st);
+        CommonConn.closeConnection(gpconnection);
 
     }
 

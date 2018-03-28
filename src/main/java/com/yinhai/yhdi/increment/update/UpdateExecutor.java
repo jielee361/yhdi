@@ -21,6 +21,7 @@ public abstract class UpdateExecutor {
     private Kryo kryo;
     boolean stopFlag;
     IcrmtConf icrmtConf;
+    private FileIndex pollIndex;
     public UpdateExecutor() {
         this.dataDir = OdiPrp.getProperty("data.path");
         this.indexQueue = IcrmtEnv.getIndexQueue();
@@ -47,7 +48,12 @@ public abstract class UpdateExecutor {
     }
 
     void pollNext() throws FileNotFoundException {
-        FileIndex pollIndex = indexQueue.poll();
+        try {
+            pollIndex= indexQueue.poll();
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("重要错误：目标已更新成功，但写入标记文件失败！下次启动必须剔除掉队列中的第一个文件！");
+        }
         //delete file
         File file = new File(dataDir,pollIndex.toString());
         file.delete();

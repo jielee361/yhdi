@@ -8,7 +8,6 @@ public class IcrmtConf {
     private String sourceUsername;
     private String sourcepassword;
     private String sourceUrl;
-    private String targetDbkind;
     private String sourceTable;//table's name which will use to sync,format: user1.table1,user2.table2
     private int redoQueueSize;
     private String lgmnrOpertion;
@@ -22,7 +21,34 @@ public class IcrmtConf {
 
     //update
     private String targetTable;
+    private String targetDbkind;
+    private String targetUrl;
+    private String targetUsername;
+    private String targetpassword;
 
+    public String getTargetUrl() {
+        return targetUrl;
+    }
+
+    public void setTargetUrl(String targetUrl) {
+        this.targetUrl = targetUrl;
+    }
+
+    public String getTargetUsername() {
+        return targetUsername;
+    }
+
+    public void setTargetUsername(String targetUsername) {
+        this.targetUsername = targetUsername;
+    }
+
+    public String getTargetpassword() {
+        return targetpassword;
+    }
+
+    public void setTargetpassword(String targetpassword) {
+        this.targetpassword = targetpassword;
+    }
 
     public String getSourceTable() {
         return sourceTable;

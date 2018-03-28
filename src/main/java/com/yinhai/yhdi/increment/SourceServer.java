@@ -78,6 +78,9 @@ public class SourceServer {
         icrmtConf.setSourceUsername(OdiPrp.getProperty("source.username"));
         icrmtConf.setSourceTable(OdiPrp.getProperty("source.table").toUpperCase());
         icrmtConf.setTargetDbkind(OdiPrp.getProperty("target.dbkind"));
+        icrmtConf.setTargetUrl(OdiPrp.getProperty("target.url"));
+        icrmtConf.setTargetUsername(OdiPrp.getProperty("target.username"));
+        icrmtConf.setTargetpassword(OdiPrp.getProperty("target.password"));
         icrmtConf.setMaxTheadPoolSize(OdiPrp.getIntProperty("threadpool.maxsize"));
         icrmtConf.setLgmnrSqlkind(OdiPrp.getProperty("lgmnr.sqlkind"));
         icrmtConf.setFileSize(OdiPrp.getIntProperty("file.size"));

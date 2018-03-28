@@ -25,7 +25,7 @@ public class IndexQueue {
      * init
      */
     public IndexQueue() {
-        indexDir = OdiPrp.getProperty("index.path");
+        indexDir = OdiPrp.getProperty("index.path");//只从配置文件读取
         inFile = new File(indexDir,"msgQueue.on");
         outFile = new File(indexDir,"outPoint");//记录已经取走的位置。
     }
@@ -48,16 +48,15 @@ public class IndexQueue {
     }
 
     /**
-     * 弹出最前面一个索引，并持久到文件，记录弹出节点。
+     * 弹出最前面一个索引，并持久到标记文件，记录弹出节点。
      * @return
      */
     public FileIndex poll() throws FileNotFoundException {
-        FileIndex fileIndex = msgQueue.poll();
         Output op = new Output(new FileOutputStream(outFile));
-        kryo.writeObject(op, fileIndex);
+        kryo.writeObject(op, msgQueue.getFirst());
         op.flush();
         op.close();
-        return fileIndex;
+        return msgQueue.poll();//若写入成功，弹出失败，会有风险。几率很小
     }
 
     /**

@@ -51,7 +51,7 @@ public class OraReadExecutor extends ReadExecutor {
         oraLgmnrOper.startLogmnr(conn,beginScn,icrmtConf.getLgmnrOpertion());
         //start read
         ResultSet rs = oraLgmnrOper.getLogmnrResult(conn, beginScn,
-                icrmtConf.getTableString(), icrmtConf.isOracle12c(), icrmtConf.getLgmnrSqlkind());
+                icrmtConf.getSourceTable(), icrmtConf.isOracle12c(), icrmtConf.getLgmnrSqlkind());
         StringBuffer sqlStrBuff = new StringBuffer();
         OraSqlParser oraSqlParser = new OraSqlParser();
         //先衔接

@@ -51,12 +51,8 @@ public class SqlPoto implements Serializable {
         this.pk = pk;
     }
 
-    public Map<String, String> getData() {
+    public Map<String, String> getAfter() {
         return after;
-    }
-
-    public void setData(Map<String, String> after) {
-        this.after = after;
     }
 
     public void printcol() {

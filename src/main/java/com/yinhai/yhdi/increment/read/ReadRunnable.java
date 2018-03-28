@@ -18,6 +18,7 @@ public class ReadRunnable implements Runnable{
     }
     @Override
     public void run() {
+        logger.info("开始启动read线程！");
         IcrmtConf icrmtConf = IcrmtEnv.getIcrmtConf();
         //get the jdbc connection
         Connection conn;
@@ -35,7 +36,6 @@ public class ReadRunnable implements Runnable{
         threadStat.setStat(BatchDiConst.RUN_STAT_RUNNING);
         IcrmtEnv.getThreadMap().put(taskName,threadStat);
         try {
-            logger.info("开始启动read线程！");
             IcrmtEnv.getRedoQueue().clear();
             readExecutor.startRead(IcrmtEnv.getRedoQueue());
             threadStat.setStat(BatchDiConst.RUN_STAT_SUCCESS);

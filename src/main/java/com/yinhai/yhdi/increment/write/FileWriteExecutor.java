@@ -29,13 +29,14 @@ public class FileWriteExecutor extends WriteExecutor {
     }
     @Override
     public void startWrite(LinkedBlockingDeque<RedoObj> redoQueue) throws Exception {
+        initPkMap();//获取主键信息
         int readNum = 0;
         long scn = 0L;
         String rsid = "";
         int ssn = 0;
         String fileName;
         List<SqlPoto> sqlPotoList = new ArrayList<>();
-        OraFileParser oraFileParser = new OraFileParser();
+        OraFileParser oraFileParser = new OraFileParser(this.pkMap);
         String dataPath = OdiPrp.getProperty("data.path");
         IndexQueue indexQueue = IcrmtEnv.getIndexQueue();
         Kryo kryo = KryoUtil.getKryo();
@@ -82,9 +83,4 @@ public class FileWriteExecutor extends WriteExecutor {
 
     }
 
-    @Override
-    public void stopWrite() {
-        this.stopFlag = true;
-
-    }
 }

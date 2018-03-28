@@ -50,6 +50,12 @@ public class SourceServer {
             e.printStackTrace();
         }
 
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         //start update
         UpdateRunnable updateRunnable = new UpdateRunnable(updateTaskName);
         try {
@@ -70,7 +76,7 @@ public class SourceServer {
         icrmtConf.setSourcepassword(OdiPrp.getProperty("source.password"));
         icrmtConf.setSourceUrl(OdiPrp.getProperty("source.url"));
         icrmtConf.setSourceUsername(OdiPrp.getProperty("source.username"));
-        icrmtConf.setTableString(OdiPrp.getProperty("table.string").toUpperCase());
+        icrmtConf.setSourceTable(OdiPrp.getProperty("source.table").toUpperCase());
         icrmtConf.setTargetDbkind(OdiPrp.getProperty("target.dbkind"));
         icrmtConf.setMaxTheadPoolSize(OdiPrp.getIntProperty("threadpool.maxsize"));
         icrmtConf.setLgmnrSqlkind(OdiPrp.getProperty("lgmnr.sqlkind"));

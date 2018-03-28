@@ -1,14 +1,19 @@
 package com.yinhai.yhdi.common;
 
+import org.apache.hadoop.fs.PathIsDirectoryException;
+
 import java.beans.PropertyVetoException;
 import java.sql.*;
+import java.util.Properties;
 
 public class CommonConn {
     private static final String oraDriver = "oracle.jdbc.driver.OracleDriver";
     private static final String hiveDriver = "org.apache.hive.jdbc.HiveDriver";
-    //String oraUrl = "jdbc:oracle:thin:@192.168.140.129:1521/orcl";
-    //String hiveUrl = "jdbc:hive2://hostip:10016/default"
-    public static Connection getOraConnection(String url,String username,String passwd) throws Exception {
+    private static final String gpDriver = "org.postgresql.Driver";
+    //    //String oraUrl = "jdbc:oracle:thin:@192.168.140.129:1521/orcl";
+    //    //String hiveUrl = "jdbc:hive2://hostip:10016/default"
+    //String url = "jdbc:postgresql://192.168.26.220:25432/template1";
+    public static synchronized Connection getOraConnection(String url, String username, String passwd) throws Exception {
         try {
             Class.forName(oraDriver);
         } catch (ClassNotFoundException e) {
@@ -30,6 +35,30 @@ public class CommonConn {
         return conn;
 
     }
+
+    /**
+     * 获取GP连接和获取ORACLE连接要加同步，否则两个获取连接的线程都是会卡在：Class.forName(hiveDriver);
+     * @param url
+     * @param username
+     * @param passwd
+     * @return
+     * @throws SQLException
+     */
+    public static synchronized Connection getGpconnection(String url,String username,String passwd) throws SQLException {
+        try {
+            Class.forName(gpDriver);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        Properties props = new Properties();
+        props.setProperty("user",username);
+        props.setProperty("password",passwd);
+        props.setProperty("ssl","false");
+        Connection conn = DriverManager.getConnection(url, props);
+        return conn;
+    }
+
+
 
     public static Connection getOraPoolConn(String url,String username,String passwd)
             throws PropertyVetoException, SQLException {

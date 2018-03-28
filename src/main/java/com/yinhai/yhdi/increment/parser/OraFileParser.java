@@ -3,17 +3,25 @@ package com.yinhai.yhdi.increment.parser;
 import com.yinhai.yhdi.increment.poto.RedoObj;
 import com.yinhai.yhdi.increment.poto.SqlPoto;
 
+import java.util.Map;
+
 public class OraFileParser {
     private int inp;
     private String vs1;
     private int dot;
     private String colvalue;
     private String colname;
+    private Map<String,String> pkMap;
+    private String pkString;
+    public OraFileParser(Map<String,String> pkMap) {
+        this.pkMap = pkMap;
+    }
 
     public SqlPoto redo2Poto(RedoObj redo) {
+        pkString = pkMap.get(redo.getSeg_owner() + "." + redo.getTable_name());
         SqlPoto sqlPoto = new SqlPoto();
         sqlPoto.setTable(redo.getTable_name());
-        sqlPoto.setPk("");
+        sqlPoto.setPk(pkString);
         switch (redo.getOperation_code()) {
             case 1 :
                 sqlPoto.setOpType("I");
@@ -40,19 +48,21 @@ public class OraFileParser {
             vs1 = vs1.substring(vs1.indexOf("\"") + 4);//no risk
             dot = vs1.indexOf(" and \"") + 6;
             if (vs1.startsWith("NULL") || vs1.startsWith("EMPTY") || vs1.startsWith(" NULL")) {//空值 no risk
-                colvalue = "null";
+                colvalue = null;
                 vs1 = vs1.substring(dot);
             }else if (vs1.startsWith("TIMESTAMP")) {//时间日期 //no risk
-                colvalue = vs1.substring(12,vs1.indexOf("'",13));
+                colvalue = "'" + vs1.substring(12,vs1.indexOf("'",13) + 1);
                 vs1 = vs1.substring(dot);
             }else if (vs1.startsWith("'")) {
-                colvalue = vs1.substring(1,vs1.indexOf("' and"));//no risk
+                colvalue = vs1.substring(0,vs1.indexOf("' and") + 1);//no risk
                 vs1 = vs1.substring(vs1.indexOf("' and") + 7);
             }else {
                 colvalue = vs1.substring(0,dot - 6);
                 vs1 = vs1.substring(dot);
             }
-            sqlPoto.putCol(colname,colvalue);
+            if (pkString.contains(colname)) { //删除只取主键
+                sqlPoto.putCol(colname,colvalue);
+            }
         }
     }
 
@@ -66,17 +76,17 @@ public class OraFileParser {
             vs1 = vs1.substring(vs1.indexOf("= ")+2);//no risk
             dot = vs1.indexOf(", \"") + 2;
             if (vs1.startsWith("NULL") || vs1.startsWith("EMPTY")) {//空值 no risk
-                colvalue = "null";
+                colvalue = null;
                 vs1 = vs1.substring(dot);
             }else if (vs1.startsWith("TIMESTAMP")) {//时间日期 //no risk
-                colvalue = vs1.substring(12,vs1.indexOf("'",13));
+                colvalue = "'" + vs1.substring(12,vs1.indexOf("'",13) + 1);
                 vs1 = vs1.substring(dot);
             }else if (vs1.startsWith("'")) {
                 if (vs1.contains("', \"")) {//have risk: "', ""
-                    colvalue = vs1.substring(1,vs1.indexOf("', \""));//have risk: "', ""
+                    colvalue = vs1.substring(0,vs1.indexOf("', \"") + 1);//have risk: "', ""
                     vs1 = vs1.substring(vs1.indexOf("', \"") + 3); //have risk: "', "" --no
                 }else { //最后一个字段
-                    colvalue = vs1.substring(1,vs1.length() - 4);
+                    colvalue = vs1.substring(0,vs1.length() - 3);
                     vs1 = "";
                 }
             }else {
@@ -99,16 +109,16 @@ public class OraFileParser {
         for (int i=0;i<size;i++) {
             dot = vs1.indexOf(",") + 1;//取colvalue不能用dot因为dot有可能为0--最后一个字段//no risk
             if (vs1.startsWith("NULL") || vs1.startsWith("EMPTY")) {//空值
-                colvalue = "null";
+                colvalue = null;
                 vs1 = vs1.substring(dot);
             }else if (vs1.startsWith("TIMESTAMP")) {//时间日期
-                colvalue = vs1.substring(12,vs1.indexOf("'",13));
+                colvalue = "'" + vs1.substring(12,vs1.indexOf("'",13) + 1);
                 vs1 = vs1.substring(dot);
             }else if (vs1.startsWith("'")) {
                 if (i == size - 1) {//最后一个字段
-                    colvalue = vs1.substring(1,vs1.length()-2);
+                    colvalue = vs1.substring(0,vs1.length()-1);
                 }else {
-                    colvalue = vs1.substring(1,vs1.indexOf("',")-1);//have risk: "',"
+                    colvalue = vs1.substring(0,vs1.indexOf("',") + 1);//have risk: "',"
                     vs1 = vs1.substring(vs1.indexOf("',")+2); //have risk: ', --no
                 }
             }else {

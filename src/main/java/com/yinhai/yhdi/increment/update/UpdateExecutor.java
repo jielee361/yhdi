@@ -48,7 +48,6 @@ public abstract class UpdateExecutor {
 
     void pollNext() throws FileNotFoundException {
         FileIndex pollIndex = indexQueue.poll();
-        System.out.println("tc:"+ pollIndex.toString());
         //delete file
         File file = new File(dataDir,pollIndex.toString());
         file.delete();

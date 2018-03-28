@@ -9,8 +9,8 @@ public class IcrmtConf {
     private String sourcepassword;
     private String sourceUrl;
     private String targetDbkind;
-    private String tableString;//table's name which will use to sync,format: user1.table1,user2.table2
-
+    private String sourceTable;//table's name which will use to sync,format: user1.table1,user2.table2
+    private int redoQueueSize;
     private String lgmnrOpertion;
     private long lgmnrBeginScn;
     private String lgmnrSqlkind;
@@ -20,8 +20,25 @@ public class IcrmtConf {
     private int fileSize;
     private int pauseTime;
 
+    //update
+    private String targetTable;
 
-    private int redoQueueSize;
+
+    public String getSourceTable() {
+        return sourceTable;
+    }
+
+    public void setSourceTable(String sourceTable) {
+        this.sourceTable = sourceTable;
+    }
+
+    public String getTargetTable() {
+        return targetTable;
+    }
+
+    public void setTargetTable(String targetTable) {
+        this.targetTable = targetTable;
+    }
 
     public int getPauseTime() {
         return pauseTime;
@@ -70,14 +87,6 @@ public class IcrmtConf {
 
     public void setOracle12c(boolean oracle12c) {
         isOracle12c = oracle12c;
-    }
-
-    public String getTableString() {
-        return tableString;
-    }
-
-    public void setTableString(String tableString) {
-        this.tableString = tableString;
     }
 
     public String getSourceDbkind() {

@@ -3,7 +3,7 @@ package com.yinhai.yhdi.increment.write;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Output;
 import com.yinhai.yhdi.common.KryoUtil;
-import com.yinhai.yhdi.common.OdiPrp;
+import com.yinhai.yhdi.common.DiPrp;
 import com.yinhai.yhdi.increment.IcrmtEnv;
 import com.yinhai.yhdi.increment.entity.FileIndex;
 import com.yinhai.yhdi.increment.entity.IcrmtConf;
@@ -40,7 +40,7 @@ public class FileWriteExecutor extends WriteExecutor {
         String fileName;
         List<SqlPoto> sqlPotoList = new ArrayList<>();
         OraFileParser oraFileParser = new OraFileParser(this.pkMap);
-        String dataPath = OdiPrp.getProperty("data.path");
+        String dataPath = DiPrp.getProperty("data.path");
         IndexQueue indexQueue = IcrmtEnv.getIndexQueue();
         Kryo kryo = KryoUtil.getKryo();
 

@@ -4,8 +4,8 @@ import com.yinhai.yhdi.batch.BatchDiConst;
 import com.yinhai.yhdi.batch.entity.TaskStat;
 import com.yinhai.yhdi.batch.entity.BatchTable;
 import com.yinhai.yhdi.common.CommonConn;
-import com.yinhai.yhdi.common.OdiPrp;
-import com.yinhai.yhdi.common.OdiUtil;
+import com.yinhai.yhdi.common.DiPrp;
+import com.yinhai.yhdi.common.DiUtil;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -26,7 +26,7 @@ public class OracleExtractExecutor extends ExtractExecutor{
         //拼接抽取SQL
         String partSql = taskStat.getPartSql();
         String extractSql ;
-        if (OdiUtil.isEmpty(partSql)) {
+        if (DiUtil.isEmpty(partSql)) {
             extractSql = String.format(BatchDiConst.EXTRACT_SQL_ORA1,batchTable.getStable());
         }else {
             extractSql = String.format(BatchDiConst.EXTRACT_SQL_ORA2,batchTable.getStable(),taskStat.getPartSql());
@@ -39,7 +39,7 @@ public class OracleExtractExecutor extends ExtractExecutor{
             conn = CommonConn.getOraConnection(batchTable.getSdb().getJdbcUrl()
                     , batchTable.getSdb().getUsername(), batchTable.getSdb().getPassword());
             st = conn.createStatement();
-            st.setFetchSize(OdiPrp.getIntProperty("extract.fetchsize"));
+            st.setFetchSize(DiPrp.getIntProperty("extract.fetchsize"));
             //System.out.println("esql: "+esql);
             rs = st.executeQuery(extractSql);
             //写入文件
@@ -65,9 +65,9 @@ public class OracleExtractExecutor extends ExtractExecutor{
         int rows = 0;
         StringBuilder sb = new StringBuilder();
         String cols;
-        String field = OdiPrp.getProperty("record.field");
-        String record = OdiPrp.getProperty("record.record");
-        int printSize = OdiPrp.getIntProperty("record.print.size");
+        String field = DiPrp.getProperty("record.field");
+        String record = DiPrp.getProperty("record.record");
+        int printSize = DiPrp.getIntProperty("record.print.size");
         while (rs.next()) {
             sb.delete(0,sb.length());
             for (int i=1;i<=columnCount;i++) {

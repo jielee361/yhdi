@@ -1,7 +1,7 @@
 package com.yinhai.yhdi.increment;
 
 import com.yinhai.yhdi.common.CommonConn;
-import com.yinhai.yhdi.common.OdiPrp;
+import com.yinhai.yhdi.common.DiPrp;
 
 import java.sql.*;
 
@@ -12,9 +12,9 @@ public class IcrmtHiveToCarbon {
      */
     public void updateDataToCarbon(IcrmtTable icrmtTable) throws SQLException {
         //获取carbon连接.
-        String url = OdiPrp.getProperty("carbon.url");
-        String username = OdiPrp.getProperty("carbon.username");
-        String password = OdiPrp.getProperty("carbon.password");
+        String url = DiPrp.getProperty("carbon.url");
+        String username = DiPrp.getProperty("carbon.username");
+        String password = DiPrp.getProperty("carbon.password");
         Connection carbonConnection = CommonConn.getHiveConnection(url, username, password);
         //加载增量数据到CARBON
         //判断有无增量数据，无则直接结束该表更新。
@@ -25,7 +25,7 @@ public class IcrmtHiveToCarbon {
         CommonConn.closeConnection(carbonConnection);
     }
     private void deleteData(IcrmtTable itable,Connection conn) throws SQLException {
-        String deleteSql = OdiPrp.getProperty("sql.delete");
+        String deleteSql = DiPrp.getProperty("sql.delete");
         String carbonTable=itable.getCarbonTable();
         String hvieTable = itable.getHiveTable();
         deleteSql = deleteSql.replace("carbon_table",carbonTable).replaceAll("col_pk",
@@ -52,8 +52,8 @@ public class IcrmtHiveToCarbon {
         //拼接SQL
         String carbonTable=itable.getCarbonTable();
         String hvieTable = itable.getHiveTable();
-        String appendSql = OdiPrp.getProperty("sql.append");
-        String selectSql = OdiPrp.getProperty("sql.select");
+        String appendSql = DiPrp.getProperty("sql.append");
+        String selectSql = DiPrp.getProperty("sql.select");
         selectSql = selectSql.replace("col_pk",itable.getPk()).replace("hive_table",hvieTable)
                 .replace("b_time",itable.getBeginTime()).replace("e_time",itable.getEndTime());
         appendSql = String.format(appendSql,carbonTable,cols,selectSql);

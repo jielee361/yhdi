@@ -1,8 +1,7 @@
 package com.yinhai.yhdi.increment;
 
-import com.yinhai.yhdi.common.OdiPrp;
+import com.yinhai.yhdi.common.DiPrp;
 import com.yinhai.yhdi.common.ThreadPoolUtil;
-import com.yinhai.yhdi.increment.entity.FileIndex;
 import com.yinhai.yhdi.increment.entity.IcrmtConf;
 import com.yinhai.yhdi.increment.entity.ThreadStat;
 import com.yinhai.yhdi.increment.poto.IndexQueue;
@@ -68,32 +67,32 @@ public class SourceServer {
 
     private static IcrmtConf getConfFromPrp() {
         IcrmtConf icrmtConf = new IcrmtConf();
-        icrmtConf.setLgmnrBeginScn(OdiPrp.getLongProperty("lgmnr.begin.scn"));
-        icrmtConf.setLgmnrOpertion(OdiPrp.getProperty("lgmnr.opertion"));
-        icrmtConf.setOracle12c((OdiPrp.getProperty("isoracle12c").equals("true")));
-        icrmtConf.setRedoQueueSize(OdiPrp.getIntProperty("redoqueue.size"));
-        icrmtConf.setSourceDbkind(OdiPrp.getProperty("source.dbkind"));
-        icrmtConf.setSourcepassword(OdiPrp.getProperty("source.password"));
-        icrmtConf.setSourceUrl(OdiPrp.getProperty("source.url"));
-        icrmtConf.setSourceUsername(OdiPrp.getProperty("source.username"));
-        icrmtConf.setSourceTable(OdiPrp.getProperty("source.table").toUpperCase());
-        icrmtConf.setTargetDbkind(OdiPrp.getProperty("target.dbkind"));
-        icrmtConf.setTargetUrl(OdiPrp.getProperty("target.url"));
-        icrmtConf.setTargetUsername(OdiPrp.getProperty("target.username"));
-        icrmtConf.setTargetpassword(OdiPrp.getProperty("target.password"));
-        icrmtConf.setMaxTheadPoolSize(OdiPrp.getIntProperty("threadpool.maxsize"));
-        icrmtConf.setLgmnrSqlkind(OdiPrp.getProperty("lgmnr.sqlkind"));
-        icrmtConf.setFileSize(OdiPrp.getIntProperty("file.size"));
-        icrmtConf.setPauseTime(OdiPrp.getIntProperty("pause.time"));
+        icrmtConf.setLgmnrBeginScn(DiPrp.getLongProperty("lgmnr.begin.scn"));
+        icrmtConf.setLgmnrOpertion(DiPrp.getProperty("lgmnr.opertion"));
+        icrmtConf.setOracle12c((DiPrp.getProperty("isoracle12c").equals("true")));
+        icrmtConf.setRedoQueueSize(DiPrp.getIntProperty("redoqueue.size"));
+        icrmtConf.setSourceDbkind(DiPrp.getProperty("source.dbkind"));
+        icrmtConf.setSourcepassword(DiPrp.getProperty("source.password"));
+        icrmtConf.setSourceUrl(DiPrp.getProperty("source.url"));
+        icrmtConf.setSourceUsername(DiPrp.getProperty("source.username"));
+        icrmtConf.setSourceTable(DiPrp.getProperty("source.table").toUpperCase());
+        icrmtConf.setTargetDbkind(DiPrp.getProperty("target.dbkind"));
+        icrmtConf.setTargetUrl(DiPrp.getProperty("target.url"));
+        icrmtConf.setTargetUsername(DiPrp.getProperty("target.username"));
+        icrmtConf.setTargetpassword(DiPrp.getProperty("target.password"));
+        icrmtConf.setMaxTheadPoolSize(DiPrp.getIntProperty("threadpool.maxsize"));
+        icrmtConf.setLgmnrSqlkind(DiPrp.getProperty("lgmnr.sqlkind"));
+        icrmtConf.setFileSize(DiPrp.getIntProperty("file.size"));
+        icrmtConf.setPauseTime(DiPrp.getIntProperty("pause.time"));
         return icrmtConf;
     }
 
     private static void createWorkDir() {
-        File dataDir = new File(OdiPrp.getProperty("data.path"));
+        File dataDir = new File(DiPrp.getProperty("data.path"));
         if (!dataDir.exists()) {
             dataDir.mkdir();
         }
-        File indexDir = new File(OdiPrp.getProperty("index.path"));
+        File indexDir = new File(DiPrp.getProperty("index.path"));
         if (!indexDir.exists()) {
             indexDir.mkdir();
         }

@@ -1,8 +1,7 @@
 package com.yinhai.yhdi.increment.update;
 
 import com.yinhai.yhdi.common.CommonConn;
-import com.yinhai.yhdi.common.OdiPrp;
-import com.yinhai.yhdi.common.TargetConn;
+import com.yinhai.yhdi.common.DiPrp;
 import com.yinhai.yhdi.increment.parser.GPSqlParer;
 import com.yinhai.yhdi.increment.poto.SqlPoto;
 import org.slf4j.Logger;
@@ -23,7 +22,7 @@ public class GPUpdateExecutor extends UpdateExecutor {
     @Override
     public void startUpdate() throws Exception {
         //get jdbc
-        Connection gpconnection = TargetConn.getGpconnection(icrmtConf.getTargetUrl(), icrmtConf.getTargetUsername()
+        Connection gpconnection = CommonConn.getGpconnection(icrmtConf.getTargetUrl(), icrmtConf.getTargetUsername()
                 ,icrmtConf.getTargetpassword());
         Statement st = gpconnection.createStatement();
         gpconnection.setAutoCommit(false);
@@ -36,7 +35,7 @@ public class GPUpdateExecutor extends UpdateExecutor {
                 Thread.sleep(icrmtConf.getPauseTime());
                 continue;
         }
-            File file = new File(OdiPrp.getProperty("data.path"), String.valueOf(System.currentTimeMillis()));
+            File file = new File(DiPrp.getProperty("data.path"), String.valueOf(System.currentTimeMillis()));
             FileWriter fw  = new FileWriter(file);
             for (SqlPoto sqlPoto : sqlPotos) {
                 st.addBatch(gpSqlParer.file2GpSql(sqlPoto));

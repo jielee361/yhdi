@@ -4,7 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.yinhai.yhdi.common.KryoUtil;
-import com.yinhai.yhdi.common.OdiPrp;
+import com.yinhai.yhdi.common.DiPrp;
 import com.yinhai.yhdi.increment.IcrmtEnv;
 import com.yinhai.yhdi.increment.entity.FileIndex;
 import org.slf4j.Logger;
@@ -25,7 +25,7 @@ public class IndexQueue {
      * init
      */
     public IndexQueue() {
-        indexDir = OdiPrp.getProperty("index.path");//只从配置文件读取
+        indexDir = DiPrp.getProperty("index.path");//只从配置文件读取
         inFile = new File(indexDir,"msgQueue.on");//索引队列
         outFile = new File(indexDir,"outPoint");//记录已经取走的位置。
     }

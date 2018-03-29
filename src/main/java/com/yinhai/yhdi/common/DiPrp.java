@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.Properties;
 
-public class OdiPrp {
+public class DiPrp {
     private static Properties prp = null;
-    private static final Logger logger = LoggerFactory.getLogger(OdiPrp.class);
+    private static final Logger logger = LoggerFactory.getLogger(DiPrp.class);
 
     static {
         File cfile = new File("");

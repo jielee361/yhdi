@@ -36,10 +36,10 @@ public class BatchDiDriver  {
 
     public BatchDiDriver() {
         initPrp();
-        String prpTables = OdiPrp.getProperty("tables");
+        String prpTables = DiPrp.getProperty("tables");
         String[] tableArry = prpTables.split("[|]");
         int lln = tableArry.length;
-        if (OdiUtil.isEmpty(tableArry[lln-1])) {
+        if (DiUtil.isEmpty(tableArry[lln-1])) {
             lln = lln - 1;
         }
         if (lln == 0) {
@@ -54,8 +54,8 @@ public class BatchDiDriver  {
             if (tableInfo.length==2) {
                 batchTable.setTtable(tableInfo[1]);
             }
-            batchTable.setDatapath(OdiPrp.getProperty("datafile.patch") + File.separator + tableInfo[0]);
-            batchTable.setExtractParallel(OdiPrp.getIntProperty("extract.parallel"));
+            batchTable.setDatapath(DiPrp.getProperty("datafile.patch") + File.separator + tableInfo[0]);
+            batchTable.setExtractParallel(DiPrp.getIntProperty("extract.parallel"));
             batchTable.setSdb(this.sdb);
             batchTable.setTdb(this.tdb);
             batchTables[i] = batchTable;
@@ -63,10 +63,10 @@ public class BatchDiDriver  {
 
     }
     private void initPrp() {
-        sdb = new DbConnInfo(OdiPrp.getProperty("sdb.url"),OdiPrp.getProperty("sdb.username")
-                ,OdiPrp.getProperty("sdb.password"),OdiPrp.getProperty("sdb.kind"));
-        tdb = new DbConnInfo(OdiPrp.getProperty("sdb.url"),"","",
-                OdiPrp.getProperty("tdb.kind"));
+        sdb = new DbConnInfo(DiPrp.getProperty("sdb.url"), DiPrp.getProperty("sdb.username")
+                , DiPrp.getProperty("sdb.password"), DiPrp.getProperty("sdb.kind"));
+        tdb = new DbConnInfo(DiPrp.getProperty("sdb.url"),"","",
+                DiPrp.getProperty("tdb.kind"));
 
     }
     public void startExtract() throws Exception {
@@ -75,7 +75,7 @@ public class BatchDiDriver  {
         }
         Connection conn = CommonConn.getOraConnection(sdb.getJdbcUrl(), sdb.getUsername(), sdb.getPassword());
         Statement st = conn.createStatement();
-        ThreadPoolUtil threadPool = ThreadPoolUtil.getThreadPool(OdiPrp.getIntProperty("thread.num"));
+        ThreadPoolUtil threadPool = ThreadPoolUtil.getThreadPool(DiPrp.getIntProperty("thread.num"));
         //开始循环提交所有表
         for (int i=0;i<batchTables.length;i++) {
             BatchTable bt = batchTables[i];
@@ -123,7 +123,7 @@ public class BatchDiDriver  {
                 threadPool.submit(taskStat.getKey(),er);
             }
             //如果表之间不并行抽取，阻塞下个表的提交
-            if (!OdiPrp.getProperty("table.isparallel").equals("true")) {
+            if (!DiPrp.getProperty("table.isparallel").equals("true")) {
                 monitorThread();
             }
         }
@@ -131,7 +131,7 @@ public class BatchDiDriver  {
         CommonConn.closeSt(st);
         CommonConn.closeConnection(conn);
         //开始监控各个线程抽取情况
-        if (OdiPrp.getProperty("table.isparallel").equals("true")) {
+        if (DiPrp.getProperty("table.isparallel").equals("true")) {
             monitorThread();
         }
         //所有抽取完成，关闭线程池

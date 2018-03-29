@@ -1,6 +1,6 @@
 package com.yinhai.yhdi.common;
 
-public class OdiUtil {
+public class DiUtil {
     public static boolean isEmpty(String ins) {
         if ("".equals(ins) || ins == null) {
             return true;

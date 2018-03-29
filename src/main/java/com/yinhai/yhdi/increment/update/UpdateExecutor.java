@@ -3,7 +3,7 @@ package com.yinhai.yhdi.increment.update;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.yinhai.yhdi.common.KryoUtil;
-import com.yinhai.yhdi.common.OdiPrp;
+import com.yinhai.yhdi.common.DiPrp;
 import com.yinhai.yhdi.increment.IcrmtEnv;
 import com.yinhai.yhdi.increment.entity.FileIndex;
 import com.yinhai.yhdi.increment.entity.IcrmtConf;
@@ -23,7 +23,7 @@ public abstract class UpdateExecutor {
     IcrmtConf icrmtConf;
     private FileIndex pollIndex;
     public UpdateExecutor() {
-        this.dataDir = OdiPrp.getProperty("data.path");
+        this.dataDir = DiPrp.getProperty("data.path");
         this.indexQueue = IcrmtEnv.getIndexQueue();
         this.kryo = KryoUtil.getKryo();
         stopFlag = false;

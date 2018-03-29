@@ -1,8 +1,8 @@
 package com.yinhai.yhdi.increment;
 
 import com.yinhai.yhdi.common.CommonConn;
-import com.yinhai.yhdi.common.OdiPrp;
-import com.yinhai.yhdi.common.OdiUtil;
+import com.yinhai.yhdi.common.DiPrp;
+import com.yinhai.yhdi.common.DiUtil;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -20,7 +20,7 @@ public class CarbonSync {
             System.out.println("==本次更新执行开始 "+sdf.format(new Date()));
             //得到本次应更新到的节点
             long ctimeM = System.currentTimeMillis();
-            long endTimeM = ctimeM - OdiPrp.getIntProperty("update.delay")*60000;
+            long endTimeM = ctimeM - DiPrp.getIntProperty("update.delay")*60000;
             String endTime = sdf.format(new Date(endTimeM))+".000000";
             //启动本次更新
             try {
@@ -31,7 +31,7 @@ public class CarbonSync {
             }
             System.out.println("==本次更新执行结束 "+sdf.format(new Date()));
             try {
-                Thread.sleep(OdiPrp.getIntProperty("run.cycle"));
+                Thread.sleep(DiPrp.getIntProperty("run.cycle"));
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 break;
@@ -46,7 +46,7 @@ public class CarbonSync {
         TableUpdateStat updteStat = new TableUpdateStat();
         IcrmtHiveToCarbon hiveToCarbon = new IcrmtHiveToCarbon();
         //获取carbon连接.
-        String url = OdiPrp.getProperty("carbon.url");
+        String url = DiPrp.getProperty("carbon.url");
         Connection conn = CommonConn.getHiveConnection(url, "", "");
         //获取要同步的表
         IcrmtTable[] syncTables =  getSyncTables();
@@ -55,8 +55,8 @@ public class CarbonSync {
             //获取上次更新节点
             String tabmeName = syncTables[i].getCarbonTable();
             IcrmtTable lastUpdate = updteStat.getLastUpdate(conn, tabmeName);
-            if (OdiUtil.isEmpty(lastUpdate.getEndTime())) {//第一次更新
-                syncTables[i].setBeginTime(OdiPrp.getProperty("update.btime"));
+            if (DiUtil.isEmpty(lastUpdate.getEndTime())) {//第一次更新
+                syncTables[i].setBeginTime(DiPrp.getProperty("update.btime"));
             }else {
                 if (!isOutofCycle(lastUpdate.getEndTime())) {//如果没有到配置周期，跳出。
                     System.out.println("===本次表："+tabmeName+" 还未达到更新周期，跳出！上次更新节点："
@@ -84,11 +84,11 @@ public class CarbonSync {
 
     private static IcrmtTable[] getSyncTables() {
         //获取要同步的表
-        String tables = OdiPrp.getProperty("tables");
-        String hivedb = OdiPrp.getProperty("hive.dbname")+".";
+        String tables = DiPrp.getProperty("tables");
+        String hivedb = DiPrp.getProperty("hive.dbname")+".";
         String[] tableArry = tables.split("[|]");
         int lln = tableArry.length;
-        if (OdiUtil.isEmpty(tableArry[lln-1])) {
+        if (DiUtil.isEmpty(tableArry[lln-1])) {
             lln = lln - 1;
         }
         if (lln == 0) {
@@ -111,8 +111,8 @@ public class CarbonSync {
 
     private static boolean isOutofCycle(String endTime) throws ParseException {
         Date endDate = sdf.parse(endTime.substring(0, 19));
-        int cycleM = OdiPrp.getIntProperty("update.cycle")*60000;
-        int delayM = OdiPrp.getIntProperty("update.delay")*60000;
+        int cycleM = DiPrp.getIntProperty("update.cycle")*60000;
+        int delayM = DiPrp.getIntProperty("update.delay")*60000;
         if (System.currentTimeMillis() - endDate.getTime() > cycleM + delayM) {
             return true;
         }else {

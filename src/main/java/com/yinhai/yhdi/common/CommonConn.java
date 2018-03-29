@@ -9,10 +9,11 @@ import java.util.Properties;
 public class CommonConn {
     private static final String oraDriver = "oracle.jdbc.driver.OracleDriver";
     private static final String hiveDriver = "org.apache.hive.jdbc.HiveDriver";
-    private static final String gpDriver = "org.postgresql.Driver";
+    private static final String gpDriver = "com.pivotal.jdbc.GreenplumDriver";
     //    //String oraUrl = "jdbc:oracle:thin:@192.168.140.129:1521/orcl";
     //    //String hiveUrl = "jdbc:hive2://hostip:10016/default"
-    //String url = "jdbc:postgresql://192.168.26.220:25432/template1";
+    //String url = "jdbc:postgresql://192.168.26.220:25432/template1"; org.postgresql.Driver
+    //jdbc:pivotal:greenplum://192.168.26.220:25432;DatabaseName=template1
     public static synchronized Connection getOraConnection(String url, String username, String passwd) throws Exception {
         try {
             Class.forName(oraDriver);
@@ -50,11 +51,11 @@ public class CommonConn {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        Properties props = new Properties();
-        props.setProperty("user",username);
-        props.setProperty("password",passwd);
-        props.setProperty("ssl","false");
-        Connection conn = DriverManager.getConnection(url, props);
+//        Properties props = new Properties();
+//        props.setProperty("user",username);
+//        props.setProperty("password",passwd);
+//        props.setProperty("ssl","false");
+        Connection conn = DriverManager.getConnection(url, username,passwd);
         return conn;
     }
 

@@ -67,6 +67,9 @@ public class FileWriteExecutor extends WriteExecutor {
             //write to file
             fileName = new StringBuffer().append(scn).append("-").append(rsid).append("-").append(ssn).toString();
             File sqlFile = new File(dataPath,fileName);
+            if (sqlFile.exists()) {
+                sqlFile.delete();
+            }
             Output op = new Output(new FileOutputStream(sqlFile));
             kryo.writeObject(op, sqlPotoList);
             op.flush();
@@ -77,7 +80,7 @@ public class FileWriteExecutor extends WriteExecutor {
             fileIndex.setRsid(rsid);
             fileIndex.setSsn(ssn);
             indexQueue.add(fileIndex);
-            logger.debug("write num:" + readNum);
+            logger.debug("read-write-num: " + readNum);
 
             if (readNum < fileSize) {
                 Thread.sleep(2000);

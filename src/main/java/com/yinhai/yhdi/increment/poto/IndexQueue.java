@@ -14,7 +14,7 @@ import java.io.*;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class IndexQueue {
-    private static final LinkedBlockingDeque<FileIndex> msgQueue = new LinkedBlockingDeque();
+    private static final LinkedBlockingDeque<FileIndex> msgQueue = new LinkedBlockingDeque<>();
     private File inFile;
     private File outFile;
     private String indexDir;
@@ -26,7 +26,7 @@ public class IndexQueue {
      */
     public IndexQueue() {
         indexDir = OdiPrp.getProperty("index.path");//只从配置文件读取
-        inFile = new File(indexDir,"msgQueue.on");
+        inFile = new File(indexDir,"msgQueue.on");//索引队列
         outFile = new File(indexDir,"outPoint");//记录已经取走的位置。
     }
     public int getSize() {
@@ -102,6 +102,7 @@ public class IndexQueue {
         //最后一个索引及为上次抽取的断点，放入到ENV中。
         if (fileIndexIn != null) {
             IcrmtEnv.setLastIndex(fileIndexIn);
+            logger.info("索引队列装载完成，上次最后抽取的节点是：" + fileIndexIn.toString());
         }else {//索引文件还为生成，为首次启动
             FileIndex fileIndex1 = new FileIndex();
             fileIndex1.setScn(0L);

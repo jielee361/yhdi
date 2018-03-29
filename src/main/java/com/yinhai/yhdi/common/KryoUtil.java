@@ -14,7 +14,7 @@ public class KryoUtil {
 			kryo.register(SqlPoto.class, 99);
             kryo.register(ArrayList.class, 96);
 			kryo.register(FileIndex.class, 97);
-			System.out.print("A kryo is initialized \n");
+			System.out.print("[INFO ] A kryo is initialized \n");
 			return kryo;
 		};
 	};

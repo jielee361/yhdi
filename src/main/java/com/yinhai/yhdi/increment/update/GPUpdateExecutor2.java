@@ -99,6 +99,7 @@ public class GPUpdateExecutor2 extends UpdateExecutor {
             pollNext();
         }
 
+        CommonConn.closeConnection(gpconnection);
 
     }
 }

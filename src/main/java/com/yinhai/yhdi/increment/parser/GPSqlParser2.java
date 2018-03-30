@@ -57,6 +57,8 @@ public class GPSqlParser2 {
                     psql.getDdata().put(pkString,pkValues);
                 }else {
                     psql.getDdata().put(pkString,pkValues);
+                    psql.getIdata().remove(pkString);
+
                 }
 
             }else {
@@ -78,6 +80,7 @@ public class GPSqlParser2 {
                         tablePsql.getDdata().put(pkString,pkValues);
                     }else {
                         tablePsql.getDdata().put(pkString,pkValues);
+                        tablePsql.getIdata().remove(pkString);
                     }
 
                 }

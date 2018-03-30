@@ -52,6 +52,7 @@ public class GPUpdateExecutor2 extends UpdateExecutor {
         //begin to update
         GPSqlParser2 gpSqlParser2 = new GPSqlParser2(tableCols);
         PreparedStatement pst;
+        //gpconnection.setAutoCommit(false);
         while (!stopFlag) {
             //get sqlPoto from file
             List<SqlPoto> sqlPotos = readNext();
@@ -92,6 +93,7 @@ public class GPUpdateExecutor2 extends UpdateExecutor {
                     CommonConn.closePS(pst);
                     logger.debug("插入完成！");
                 }
+                //gpconnection.commit();
 
             }
 

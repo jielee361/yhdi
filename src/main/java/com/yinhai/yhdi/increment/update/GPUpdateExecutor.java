@@ -35,18 +35,18 @@ public class GPUpdateExecutor extends UpdateExecutor {
                 Thread.sleep(icrmtConf.getPauseTime());
                 continue;
         }
-            File file = new File(DiPrp.getProperty("data.path"), String.valueOf(System.currentTimeMillis()));
-            FileWriter fw  = new FileWriter(file);
+            //File file = new File(DiPrp.getProperty("data.path"), String.valueOf(System.currentTimeMillis()));
+            //FileWriter fw  = new FileWriter(file);
             for (SqlPoto sqlPoto : sqlPotos) {
                 st.addBatch(gpSqlParer.file2GpSql(sqlPoto));
-                fw.write(gpSqlParer.file2GpSql(sqlPoto) + ";\n");
+                //fw.write(gpSqlParer.file2GpSql(sqlPoto) + ";\n");
                 //sqlPoto.printcol();
                 //logger.debug("add sql:" + gpSqlParer.file2GpSql(sqlPoto));
             }
 
             logger.debug("update: SQL准备完成-" + sqlPotos.size());
-            fw.flush();
-            fw.close();
+            //fw.flush();
+            //fw.close();
             //return;
             st.executeBatch();
             //gpconnection.commit();

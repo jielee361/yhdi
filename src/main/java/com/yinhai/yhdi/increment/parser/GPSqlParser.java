@@ -4,7 +4,7 @@ import com.yinhai.yhdi.increment.poto.SqlPoto;
 
 import java.util.Map;
 
-public class GPSqlParer {
+public class GPSqlParser {
     private StringBuilder sb1 = new StringBuilder();
     private StringBuilder sb2 = new StringBuilder();
     private String insert = "insert into %s (%s) values (%s)";

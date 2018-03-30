@@ -54,15 +54,13 @@ public class OraFileParser {
                 colvalue = "'" + vs1.substring(12,vs1.indexOf("'",13) + 1);
                 vs1 = vs1.substring(dot);
             }else if (vs1.startsWith("'")) {
-                colvalue = vs1.substring(0,vs1.indexOf("' and") + 1);//no risk
+                colvalue = vs1.substring(1,vs1.indexOf("' and") );//no risk
                 vs1 = vs1.substring(vs1.indexOf("' and") + 7);
             }else {
                 colvalue = vs1.substring(0,dot - 6);
                 vs1 = vs1.substring(dot);
             }
-            if (pkString.contains(colname)) { //删除只取主键
                 sqlPoto.putCol(colname,colvalue);
-            }
         }
     }
 
@@ -83,7 +81,7 @@ public class OraFileParser {
                 vs1 = vs1.substring(dot);
             }else if (vs1.startsWith("'")) {
                 if (vs1.contains("', \"")) {//have risk: "', ""
-                    colvalue = vs1.substring(0,vs1.indexOf("', \"") + 1);//have risk: "', ""
+                    colvalue = vs1.substring(1,vs1.indexOf("', \""));//have risk: "', ""
                     vs1 = vs1.substring(vs1.indexOf("', \"") + 3); //have risk: "', "" --no
                 }else { //最后一个字段
                     colvalue = vs1.substring(0,vs1.length() - 3);
@@ -112,13 +110,13 @@ public class OraFileParser {
                 colvalue = null;
                 vs1 = vs1.substring(dot);
             }else if (vs1.startsWith("TIMESTAMP")) {//时间日期
-                colvalue = "'" + vs1.substring(12,vs1.indexOf("'",13) + 1);
+                colvalue = vs1.substring(12,vs1.indexOf("'",13) );
                 vs1 = vs1.substring(dot);
             }else if (vs1.startsWith("'")) {
                 if (i == size - 1) {//最后一个字段
-                    colvalue = vs1.substring(0,vs1.length()-1);
+                    colvalue = vs1.substring(1,vs1.length()-2);
                 }else {
-                    colvalue = vs1.substring(0,vs1.indexOf("',") + 1);//have risk: "',"
+                    colvalue = vs1.substring(1,vs1.indexOf("',") );//have risk: "',"
                     vs1 = vs1.substring(vs1.indexOf("',")+2); //have risk: ', --no
                 }
             }else {

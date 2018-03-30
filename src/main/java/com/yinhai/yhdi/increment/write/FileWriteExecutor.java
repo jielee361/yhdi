@@ -64,9 +64,12 @@ public class FileWriteExecutor extends WriteExecutor {
                 Thread.sleep(icrmtConf.getPauseTime());
                 continue;
             }
+            FileIndex fileIndex = new FileIndex();
+            fileIndex.setScn(scn);
+            fileIndex.setRsid(rsid);
+            fileIndex.setSsn(ssn);
             //write to file
-            fileName = new StringBuffer().append(scn).append("-").append(rsid).append("-").append(ssn).toString();
-            File sqlFile = new File(dataPath,fileName);
+            File sqlFile = new File(dataPath,fileIndex.toString());
             if (sqlFile.exists()) {
                 sqlFile.delete();
             }
@@ -75,10 +78,6 @@ public class FileWriteExecutor extends WriteExecutor {
             op.flush();
             op.close();
             //write message queue
-            FileIndex fileIndex = new FileIndex();
-            fileIndex.setScn(scn);
-            fileIndex.setRsid(rsid);
-            fileIndex.setSsn(ssn);
             indexQueue.add(fileIndex);
             logger.debug("read-write-num: " + readNum);
 

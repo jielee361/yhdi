@@ -19,7 +19,7 @@ public class UpdateRunnable implements Runnable {
         threadStat.setBtime(System.currentTimeMillis());
         threadStat.setStat(BatchDiConst.RUN_STAT_RUNNING);
         IcrmtEnv.getThreadMap().put(taskName,threadStat);
-        UpdateExecutor updateExecutor = new GPUpdateExecutor();
+        UpdateExecutor updateExecutor = new GPUpdateExecutor2();
         try {
             logger.info("开始启动update线程！");
             updateExecutor.startUpdate();

@@ -51,11 +51,11 @@ public class CommonConn {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-//        Properties props = new Properties();
-//        props.setProperty("user",username);
-//        props.setProperty("password",passwd);
-//        props.setProperty("ssl","false");
-        Connection conn = DriverManager.getConnection(url, username,passwd);
+        Properties props = new Properties();
+        props.setProperty("user",username);
+        props.setProperty("password",passwd);
+        props.setProperty("ssl","false");
+        Connection conn = DriverManager.getConnection(url, props);
         return conn;
     }
 

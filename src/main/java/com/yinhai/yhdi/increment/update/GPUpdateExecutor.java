@@ -2,7 +2,7 @@ package com.yinhai.yhdi.increment.update;
 
 import com.yinhai.yhdi.common.CommonConn;
 import com.yinhai.yhdi.common.DiPrp;
-import com.yinhai.yhdi.increment.parser.GPSqlParer;
+import com.yinhai.yhdi.increment.parser.GPSqlParser;
 import com.yinhai.yhdi.increment.poto.SqlPoto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +25,8 @@ public class GPUpdateExecutor extends UpdateExecutor {
         Connection gpconnection = CommonConn.getGpconnection(icrmtConf.getTargetUrl(), icrmtConf.getTargetUsername()
                 ,icrmtConf.getTargetpassword());
         Statement st = gpconnection.createStatement();
-        gpconnection.setAutoCommit(false);
-        GPSqlParer gpSqlParer = new GPSqlParer();
+        //gpconnection.setAutoCommit(false);
+        GPSqlParser gpSqlParer = new GPSqlParser();
         while (!stopFlag) {
             //获取数据
             List<SqlPoto> sqlPotos = readNext();
@@ -43,11 +43,14 @@ public class GPUpdateExecutor extends UpdateExecutor {
                 //sqlPoto.printcol();
                 //logger.debug("add sql:" + gpSqlParer.file2GpSql(sqlPoto));
             }
-            fw.close();
+
             logger.debug("update: SQL准备完成-" + sqlPotos.size());
+            fw.flush();
+            fw.close();
+            //return;
             st.executeBatch();
-            gpconnection.commit();
-            logger.debug("update: SQL执行完成-" + sqlPotos.size());
+            //gpconnection.commit();
+            //logger.debug("update: SQL执行完成-" + sqlPotos.size());
             //处理成功后弹出
             pollNext();
         }

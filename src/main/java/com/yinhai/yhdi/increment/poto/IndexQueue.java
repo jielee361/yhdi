@@ -83,6 +83,12 @@ public class IndexQueue {
             isout = true;
         }
         //循环读取未处理的索引到msgQueue中
+        File tmpFile = new File(indexDir,"msgQueue.tmp");//临时队列
+        if (tmpFile.exists()) {
+            tmpFile.delete();
+        }
+        Output tmpOp = new Output(new FileOutputStream(tmpFile,true));
+        int queueLenth = 0;
         if (inFile.exists()) {
             Input inputIn = new Input(new FileInputStream(inFile));
             while (inputIn.available() != 0) {
@@ -90,15 +96,29 @@ public class IndexQueue {
                 if (isout) {
                     if (fileIndexIn.toString().equals(fileIndexOut.toString())) {
                         isout = false;//此后的索引都是未获取过的索引，需要放入到索引队列中。
+                        kryo.writeObject(tmpOp, fileIndexIn);//最少文件里要保持一个索引
                     }
+
                 }else {
                     msgQueue.add(fileIndexIn);
+                    kryo.writeObject(tmpOp, fileIndexIn);
+                    queueLenth ++;
                 }
             }
             inputIn.close();
+            tmpOp.close();
+            //转换存储文件
+            File offFile = new File(indexDir,"msgQueue.off");
+            if (offFile.exists()) {
+                offFile.delete();
+            }
+            inFile.renameTo(offFile);
+            tmpFile.renameTo(inFile);
+            inFile = new File(indexDir,"msgQueue.on");
         }else {
             logger.warn("未找到索引队列文件，此次启动按首次启动规则启动。");
         }
+
         //最后一个索引及为上次抽取的断点，放入到ENV中。
         if (fileIndexIn != null) {
             IcrmtEnv.setLastIndex(fileIndexIn);
@@ -113,13 +133,4 @@ public class IndexQueue {
 
     }
 
-    /**
-     * 必须保证没有新的Fileindex写入队列时，才能调用此方法。
-     * 关闭源端进程时调用：根据outPoint位置，重新持久化msgQueue,以便减小文件大小，
-     * 缩短下次启动时初始化队列的时间。
-     * 清理时，最少要保证还剩下1个索引，不能全部清空。
-     */
-    public void shutdown() {
-
-    }
 }

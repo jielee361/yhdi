@@ -84,6 +84,7 @@ public class SourceServer {
         icrmtConf.setLgmnrSqlkind(DiPrp.getProperty("lgmnr.sqlkind"));
         icrmtConf.setFileSize(DiPrp.getIntProperty("file.size"));
         icrmtConf.setPauseTime(DiPrp.getIntProperty("pause.time"));
+        icrmtConf.setPdbUrl(DiPrp.getProperty("pdb.url"));
         return icrmtConf;
     }
 

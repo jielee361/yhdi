@@ -2,6 +2,7 @@ package com.yinhai.yhdi.increment.read;
 
 import com.yinhai.yhdi.batch.BatchDiConst;
 import com.yinhai.yhdi.common.CommonConn;
+import com.yinhai.yhdi.common.DiPrp;
 import com.yinhai.yhdi.increment.IcrmtEnv;
 import com.yinhai.yhdi.increment.entity.IcrmtConf;
 import com.yinhai.yhdi.increment.entity.ThreadStat;
@@ -20,14 +21,16 @@ public class ReadRunnable implements Runnable{
     public void run() {
         logger.info("开始启动read线程！");
         IcrmtConf icrmtConf = IcrmtEnv.getIcrmtConf();
-        //get the jdbc connection
+        //get the logmnr jdbc connection
+        String url = icrmtConf.getSourceUrl();;
+        String username = icrmtConf.getSourceUsername();
+        String password = icrmtConf.getSourcepassword();
         Connection conn;
         try {
-            conn = CommonConn.getOraConnection(icrmtConf.getSourceUrl(),
-                    icrmtConf.getSourceUsername(), icrmtConf.getSourcepassword());
+            conn = CommonConn.getOraConnection(url, username, password);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("获取JDBC连接出错！");
+            throw new RuntimeException("获取logmnr JDBC连接出错！");
         }
         ReadExecutor readExecutor = new OraReadExecutor(conn);
         ThreadStat threadStat = new ThreadStat();

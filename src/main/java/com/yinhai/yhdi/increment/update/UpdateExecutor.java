@@ -33,6 +33,7 @@ public abstract class UpdateExecutor {
     public  void stopUpdate() {
         stopFlag = true;
     }
+
     ArrayList<SqlPoto> readNext() throws FileNotFoundException {
         //get index
         if (indexQueue.getSize() == 0) {

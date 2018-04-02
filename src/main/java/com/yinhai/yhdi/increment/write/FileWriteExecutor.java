@@ -55,6 +55,7 @@ public class FileWriteExecutor extends WriteExecutor {
                 }
                 //parse sql
                 sqlPotoList.add(oraFileParser.redo2Poto(redoObj));
+                //oraFileParser.redo2Poto(redoObj).printcol();
                 scn = redoObj.getScn();
                 rsid = redoObj.getRs_id();
                 ssn = redoObj.getSsn();

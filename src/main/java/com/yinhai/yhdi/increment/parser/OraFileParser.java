@@ -12,13 +12,17 @@ public class OraFileParser {
     private String colvalue;
     private String colname;
     private Map<String,String> pkMap;
-    private String pkString;
+    private String pkString ;
     public OraFileParser(Map<String,String> pkMap) {
         this.pkMap = pkMap;
     }
 
     public SqlPoto redo2Poto(RedoObj redo) {
         pkString = pkMap.get(redo.getSeg_owner() + "." + redo.getTable_name());
+        if (pkString == null) {
+            throw new RuntimeException("SQL解析错误：没有获取到表 "+redo.getSeg_owner() + "." + redo.getTable_name()
+                    + " 的主键!");
+        }
         SqlPoto sqlPoto = new SqlPoto();
         sqlPoto.setTable(redo.getTable_name());
         sqlPoto.setPk(pkString);

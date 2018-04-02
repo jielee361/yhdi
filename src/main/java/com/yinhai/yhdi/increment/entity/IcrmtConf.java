@@ -14,6 +14,7 @@ public class IcrmtConf {
     private long lgmnrBeginScn;
     private String lgmnrSqlkind;
     private boolean isOracle12c;
+    private String pdbUrl;
 
     //write
     private int fileSize;
@@ -25,6 +26,14 @@ public class IcrmtConf {
     private String targetUrl;
     private String targetUsername;
     private String targetpassword;
+
+    public String getPdbUrl() {
+        return pdbUrl;
+    }
+
+    public void setPdbUrl(String pdbUrl) {
+        this.pdbUrl = pdbUrl;
+    }
 
     public String getTargetUrl() {
         return targetUrl;

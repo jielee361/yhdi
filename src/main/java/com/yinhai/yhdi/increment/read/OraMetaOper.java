@@ -14,7 +14,13 @@ import java.util.Map;
 public class OraMetaOper {
     public static Map<String,String> getTablePk() throws Exception {
         IcrmtConf icrmtConf = IcrmtEnv.getIcrmtConf();
-        Connection conn = CommonConn.getOraConnection(icrmtConf.getSourceUrl(),
+        String url;
+        if (icrmtConf.isOracle12c()) {
+            url = icrmtConf.getPdbUrl();
+        }else {
+            url = icrmtConf.getSourceUrl();
+        }
+        Connection conn = CommonConn.getOraConnection(url,
                     icrmtConf.getSourceUsername(), icrmtConf.getSourcepassword());
         String getPkSql = String.format(IcrmtCost.ORA_PK_SQL,icrmtConf.getSourceTable().toUpperCase());
         Map<String,String> pkMap = new HashMap<>();

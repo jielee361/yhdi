@@ -34,6 +34,9 @@ public class GPSqlParser2 {
             sqlPoto =  sqlPotos.get(i);
             table = sqlPoto.getTable();
             colNames = tableCols.get(table);
+            if (colNames == null) {
+                throw new RuntimeException("更新出错! 目标端未获取到表：" + table + " 的元数据信息，请确认表是否存在。");
+            }
             //get pk col value
             String[] pks = sqlPoto.getPk().split(",");
             pkValues = new ArrayList<>(pks.length);

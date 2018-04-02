@@ -1,5 +1,6 @@
 package com.yinhai.yhdi.increment.read;
 
+import com.yinhai.yhdi.common.DiPrp;
 import com.yinhai.yhdi.increment.IcrmtCost;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +64,7 @@ public class OraLogmnrOper {
 	 * @param conn
 	 * @param beginScn
 	 * @param tableString 格式（db1.t1,db1.t1） 12c: (pdb1.db1.t1,pdb1.db1.t2)
-	 * @param hasContainer 释放有PDB，及是否是12C
+	 * @param hasContainer 是否有PDB，及是否是12C
 	 * @param sqlKind 操作类型，(1,2,3,4)
 	 * @return
 	 * @throws SQLException
@@ -75,7 +76,9 @@ public class OraLogmnrOper {
 			getsql = new StringBuffer()
 					.append("select scn,rs_id,ssn,seg_owner,table_name,operation_code,sql_redo,csf,src_con_name from v$logmnr_contents a where a.SCN>=")
 					.append(beginScn.toString())
-					.append(" and src_con_name||'.'||seg_owner||'.'||table_name in (")
+					.append(" and src_con_name = '")
+					.append(DiPrp.getProperty("ora12c.pdbname").toUpperCase())
+					.append("' and seg_owner||'.'||table_name in (")
 					.append(tableString)
 					.append(") and operation_code in ")
 					.append(sqlKind)

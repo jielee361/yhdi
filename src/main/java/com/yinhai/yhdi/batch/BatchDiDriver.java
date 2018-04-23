@@ -92,14 +92,14 @@ public class BatchDiDriver  {
                     taskStat.setPartSql("'" + rs.getString(1).replace("field","' and '") + "'");
                     bt.getTaskStatMap().put(bt.getStable()+"-task"+threadId,taskStat);
                     threadId++;
-                    System.out.println(rs.getString(1));
+                    //System.out.println(rs.getString(1));
 
                 }
                 CommonConn.closeRS(rs);
                 if (threadId == 1) {
                     throw  new RuntimeException("未获取到切分ROWID信息，请确认表名是否正确，或者抽取用户是否有动态视图字典的权限！");
                 }
-                return;
+                //return;
             }else {//单线程抽取
                 TaskStat taskStat = new TaskStat();
                 bt.getTaskStatMap().put(bt.getStable()+"-task1",taskStat);

@@ -1,6 +1,5 @@
 package com.yinhai.yhdi.common;
 
-import org.apache.hadoop.fs.PathIsDirectoryException;
 
 import java.beans.PropertyVetoException;
 import java.sql.*;
@@ -38,7 +37,7 @@ public class CommonConn {
     }
 
     /**
-     * 获取GP连接和获取ORACLE连接要加同步，否则两个获取连接的线程都是会卡在：Class.forName(hiveDriver);
+     * 获取GP连接和获取ORACLE连接要加同步，否则两个获取连接的线程都是会卡在：Class.forName();
      * @param url
      * @param username
      * @param passwd

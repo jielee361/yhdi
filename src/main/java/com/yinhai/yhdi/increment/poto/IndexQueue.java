@@ -17,6 +17,7 @@ public class IndexQueue {
     private static final LinkedBlockingDeque<FileIndex> msgQueue = new LinkedBlockingDeque<>();
     private File inFile;
     private File outFile;
+    private File kFile;
     private String indexDir;
     private final Kryo kryo = KryoUtil.getKryo();
     private final static Logger logger = LoggerFactory.getLogger(IndexQueue.class);
@@ -28,6 +29,7 @@ public class IndexQueue {
         indexDir = DiPrp.getProperty("index.path");//只从配置文件读取
         inFile = new File(indexDir,"msgQueue.on");//索引队列
         outFile = new File(indexDir,"outPoint");//记录已经取走的位置。
+        kFile = new File(indexDir,"kfkNode");
     }
     public int getSize() {
         return msgQueue.size();
@@ -47,6 +49,14 @@ public class IndexQueue {
 
     }
 
+    public void addK(FileIndex fileIndex) throws FileNotFoundException {
+        Output op = new Output(new FileOutputStream(kFile));
+        kryo.writeObject(op, fileIndex);
+        op.flush();
+        op.close();
+    }
+
+
     /**
      * 弹出最前面一个索引，并持久到标记文件，记录弹出节点。
      * @return
@@ -65,6 +75,24 @@ public class IndexQueue {
      */
     public FileIndex getFirst() {
         return msgQueue.getFirst();
+    }
+
+    /**
+     * 无索引队列情况初始化，用于源端直接发送数据到消息队列，如KAFKA
+     */
+    public void startupK() throws FileNotFoundException {
+        FileIndex fileIndex;
+        if (kFile.exists()) {
+            Input input = new Input(new FileInputStream(kFile));
+            fileIndex = kryo.readObject(input, FileIndex.class);
+        }else {
+            //索引文件还为生成，为首次启动
+            fileIndex = new FileIndex();
+            fileIndex.setScn(0L);
+            fileIndex.setRsid("");
+            fileIndex.setSsn(0);
+        }
+        IcrmtEnv.setLastIndex(fileIndex);
     }
 
     /**

@@ -47,7 +47,7 @@ public class OraSqlParser extends SqlParser{
             vs1 = vs1.substring(vs1.indexOf("\"") + 4);//no risk
             dot = vs1.indexOf(" and \"") + 6;
             if (vs1.startsWith("NULL") || vs1.startsWith("EMPTY") || vs1.startsWith(" NULL")) {//空值 no risk
-                colvalue = "null";
+                colvalue = "";
                 vs1 = vs1.substring(dot);
             }else if (vs1.startsWith("TIMESTAMP")) {//时间日期 //no risk
                 colvalue = vs1.substring(12,vs1.indexOf("'",13));
@@ -55,7 +55,7 @@ public class OraSqlParser extends SqlParser{
             }else if (vs1.startsWith("'")) {
                 colvalue = vs1.substring(1,vs1.indexOf("' and"));//no risk
                 vs1 = vs1.substring(vs1.indexOf("' and") + 7);
-                System.out.println(vs1);
+                //System.out.println(vs1);
             }else {
                 colvalue = vs1.substring(0,dot - 6);
                 vs1 = vs1.substring(dot);
@@ -75,7 +75,7 @@ public class OraSqlParser extends SqlParser{
             vs1 = vs1.substring(vs1.indexOf("= ")+2);//no risk
             dot = vs1.indexOf(", \"") + 2;
             if (vs1.startsWith("NULL") || vs1.startsWith("EMPTY")) {//空值 no risk
-                colvalue = "null";
+                colvalue = "";
                 vs1 = vs1.substring(dot);
             }else if (vs1.startsWith("TIMESTAMP")) {//时间日期 //no risk
                 colvalue = vs1.substring(12,vs1.indexOf("'",13));
@@ -85,7 +85,7 @@ public class OraSqlParser extends SqlParser{
                     colvalue = vs1.substring(1,vs1.indexOf("', \""));//have risk: "', ""
                     vs1 = vs1.substring(vs1.indexOf("', \"") + 3); //have risk: "', "" --no
                 }else { //最后一个字段
-                    colvalue = vs1.substring(1,vs1.length() - 4);
+                    colvalue = vs1.substring(0,vs1.length() - 3);
                     vs1 = "";
                 }
             }else {
@@ -103,14 +103,14 @@ public class OraSqlParser extends SqlParser{
         // TIMESTAMP ' 2017-12-23 12:15:00.123000',TIMESTAMP ' 2017-12-23 12:15:00.123456780')
 
         inp = sqlRedo.indexOf(") values (");//no risk
-        String[] cols = sqlRedo.substring(sqlRedo.indexOf("(")+1,inp).split(",");//no risk
+        String[] cols = sqlRedo.substring(sqlRedo.indexOf("(")+1,inp).replace("\"","").split(",");
         int size = cols.length;
         JSONObject colJson = new JSONObject(size);
         vs1 = sqlRedo.substring(inp + 10);
         for (int i=0;i<size;i++) {
             dot = vs1.indexOf(",") + 1;//取colvalue不能用dot因为dot有可能为0--最后一个字段//no risk
             if (vs1.startsWith("NULL") || vs1.startsWith("EMPTY")) {//空值
-                colvalue = "null";
+                colvalue = "";
                 vs1 = vs1.substring(dot);
             }else if (vs1.startsWith("TIMESTAMP")) {//时间日期
                 colvalue = vs1.substring(12,vs1.indexOf("'",13));
@@ -119,7 +119,7 @@ public class OraSqlParser extends SqlParser{
                 if (i == size - 1) {//最后一个字段
                     colvalue = vs1.substring(1,vs1.length()-2);
                 }else {
-                    colvalue = vs1.substring(1,vs1.indexOf("',")-1);//have risk: "',"
+                    colvalue = vs1.substring(1,vs1.indexOf("',"));//have risk: "',"
                     vs1 = vs1.substring(vs1.indexOf("',")+2); //have risk: ', --no
                 }
             }else {

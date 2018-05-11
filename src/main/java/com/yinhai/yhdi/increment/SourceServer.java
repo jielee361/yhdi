@@ -28,7 +28,11 @@ public class SourceServer {
         IcrmtEnv.init(threadMap,threadPool,icrmtConf);
         IndexQueue indexQueue = new IndexQueue();
         try {
-            indexQueue.startup();//初始化索引队列
+            if ("true".equals(DiPrp.getProperty("kafka.isopen"))) {
+                indexQueue.startupK();
+            }else {
+                indexQueue.startup();//初始化索引队列
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -56,12 +60,12 @@ public class SourceServer {
         }
 
         //start update
-        UpdateRunnable updateRunnable = new UpdateRunnable(updateTaskName);
-        try {
-            IcrmtEnv.getThreadPool().submit(updateTaskName,updateRunnable);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        UpdateRunnable updateRunnable = new UpdateRunnable(updateTaskName);
+//        try {
+//            IcrmtEnv.getThreadPool().submit(updateTaskName,updateRunnable);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
     }
 

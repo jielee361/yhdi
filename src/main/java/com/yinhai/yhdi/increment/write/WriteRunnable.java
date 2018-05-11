@@ -2,6 +2,7 @@ package com.yinhai.yhdi.increment.write;
 
 import com.yinhai.yhdi.batch.BatchDiConst;
 import com.yinhai.yhdi.common.CommonConn;
+import com.yinhai.yhdi.common.DiPrp;
 import com.yinhai.yhdi.increment.IcrmtEnv;
 import com.yinhai.yhdi.increment.entity.IcrmtConf;
 import com.yinhai.yhdi.increment.entity.ThreadStat;
@@ -22,7 +23,12 @@ public class WriteRunnable implements Runnable {
         threadStat.setBtime(System.currentTimeMillis());
         threadStat.setStat(BatchDiConst.RUN_STAT_RUNNING);
         IcrmtEnv.getThreadMap().put(taskName,threadStat);
-        WriteExecutor writeExecutor = new FileWriteExecutor();
+        WriteExecutor writeExecutor;
+        if ("true".equals(DiPrp.getProperty("kafka.isopen"))) {
+            writeExecutor = new KafkaWriteExecutor();
+        }else {
+            writeExecutor = new FileWriteExecutor();
+        }
         try {
             logger.info("开始启动write线程！");
             //IcrmtEnv.getRedoQueue().clear();

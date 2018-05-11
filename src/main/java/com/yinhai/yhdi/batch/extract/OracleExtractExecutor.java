@@ -73,7 +73,7 @@ public class OracleExtractExecutor extends ExtractExecutor{
             for (int i=1;i<=columnCount;i++) {
                 cols = rs.getString(i);
                 if (cols != null) {
-                    sb.append(cols.replaceAll("\\n",""));
+                    sb.append(cols.replaceAll("\n|\r|\t",""));
                 }
                 sb.append(field);
             }

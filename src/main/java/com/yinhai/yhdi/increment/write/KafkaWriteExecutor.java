@@ -53,7 +53,7 @@ public class KafkaWriteExecutor extends WriteExecutor {
             fileIndex.setSsn(redoObj.getSsn());
             jsonObject = oraSqlParser.redo2Json(redoObj);
             producer.send(new ProducerRecord<>(topic,redoObj.getTable_name(),jsonObject.toJSONString())).get();
-            logger.info(jsonObject.toJSONString());
+            //logger.info(jsonObject.toJSONString());
             try {
                 indexQueue.addK(fileIndex);
             }catch (Exception e) {

@@ -16,6 +16,7 @@ public interface BatchDiConst {
 
     String EXTRACT_STAT_OUTP = "task: %s -> 状态：%s, 数据条数：%s, 时长：%s 秒";
 
+    String SSH_EXEC = "hive -e \"LOAD DATA LOCAL INPATH '%s' OVERWRITE INTO TABLE %s\" &";
 
     String GET_PART_SQL = "SELECT dbms_rowid.rowid_create(1, DOI, lo_fno, lo_block, 0)||'field' ||dbms_rowid.rowid_create(1, DOI, hi_fno, hi_block, 1000000) partsql \n"
             + "FROM (SELECT DISTINCT DOI,grp, \n"

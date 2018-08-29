@@ -127,6 +127,8 @@ public class BatchDiDriver {
             //如果表之间不并行抽取，阻塞下个表的提交
             if (!DiPrp.getProperty("table.isparallel").equals("true")) {
                 monitorThread();
+                //阻塞结束 导入数据到hive目标库
+                importData(bt.getStable());
             }
         }
         //提交完后关闭ORACLE连接
@@ -138,7 +140,6 @@ public class BatchDiDriver {
         }
         //所有抽取完成，关闭线程池
         threadPool.close();
-
     }
 
     private void monitorThread() {
@@ -189,15 +190,11 @@ public class BatchDiDriver {
                 }
 
             }
+
+
             logger.info("== running task num: " + runningNum);
             if (runningNum == 0) {//已没有还在运行的程序。
                 logger.info("==此表监控完成！");
-
-                //hive导入数据到目标库
-                for (int i = 0; i < batchTables.length; i++) {
-                    importData(batchTables[i].getStable());
-                }
-
                 break;
             }
 
@@ -210,20 +207,26 @@ public class BatchDiDriver {
         }
     }
 
-    private void importData(String taskName) {
+    private void importData(String tableName) {
         switch (DiPrp.getProperty("tdb.kind")) {
             case BatchDiConst.DB_KIND_HIVE:
                 String cmd = String.format(BatchDiConst.SSH_EXEC,
-                        DiPrp.getProperty("datafile.patch") + "/" + taskName + "/*",
-                        taskName);
+                        DiPrp.getProperty("datafile.patch") + File.separator + tableName
+                                + File.separator + "*",
+                        tableName) + " >> ./logs/input.log &";
                 logger.info("加载数据命令：" + cmd);
                 try {
-                    SSHConnection.excuteCmd("127.0.0.1",
-                            DiPrp.getProperty("tdb.username"),
-                            DiPrp.getProperty("tdb.password"),
-                            cmd);
+                    new Thread(() -> {
+                        try {
+                            RuntimeOperate.runCmd(cmd);
+                            logger.info("=={}导入结束。", tableName);
+                        } catch (Exception e) {
+                            logger.error("加载数出错：{}", e);
+                        }
+                    }).start();
+
                 } catch (Exception e) {
-                    logger.warn(e.getMessage());
+                    logger.warn("表{}数据导入失败：{}" , tableName, e.getMessage());
                 }
                 break;
             default:
